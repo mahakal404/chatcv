@@ -1,0 +1,69 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: users
+    // Document ID: {uid}
+    // Fields:
+    //   - uid: string (required)
+    //   - displayName: string
+    //   - email: string (required)
+    //   - photoURL: string
+    //
+    // Collection: resumes
+    // Document ID: {resumeId}
+    // Fields:
+    //   - id: string
+    //   - uid: string (required)
+    //   - title: string (required)
+    //   - lastModified: timestamp (required)
+    //   - data: map (required)
+    //
+    // ===============================================================
+
+    // Helper Functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isDocOwner() {
+      return isAuthenticated() && request.auth.uid == resource.data.uid;
+    }
+
+    function isValidUser(data) {
+      return data.keys().hasAll(['uid', 'email']) &&
+             data.uid is string &&
+             data.email is string;
+    }
+
+    function isValidResume(data) {
+      return data.keys().hasAll(['uid', 'title', 'data', 'lastModified']) &&
+             data.uid is string &&
+             data.title is string && data.title.size() > 0 && data.title.size() < 100 &&
+             data.data is map &&
+             data.lastModified is timestamp;
+    }
+
+    // Rules for User Profiles
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidUser(request.resource.data);
+      allow update: if isOwner(userId) && isValidUser(request.resource.data);
+    }
+
+    // Rules for Resumes
+    match /resumes/{resumeId} {
+      allow read: if isAuthenticated() && (resource == null || resource.data.uid == request.auth.uid);
+      allow create: if isAuthenticated() && request.resource.data.uid == request.auth.uid && isValidResume(request.resource.data);
+      allow update: if isDocOwner() && request.resource.data.uid == request.auth.uid && isValidResume(request.resource.data);
+      allow delete: if isDocOwner();
+    }
+  }
+}

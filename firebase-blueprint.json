@@ -1,0 +1,52 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "User Profile",
+      "description": "Information about the user.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "The unique ID of the user." },
+        "displayName": { "type": "string", "description": "The display name of the user." },
+        "email": { "type": "string", "description": "The email of the user." },
+        "photoURL": { "type": "string", "description": "The photo URL of the user." }
+      },
+      "required": ["uid", "email"]
+    },
+    "Resume": {
+      "title": "Resume",
+      "description": "A resume document created by a user.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "The unique ID of the resume." },
+        "uid": { "type": "string", "description": "The ID of the user who owns this resume." },
+        "title": { "type": "string", "description": "The title of the resume (e.g., 'Software Engineer Resume')." },
+        "lastModified": { "type": "string", "format": "date-time", "description": "The last time the resume was modified." },
+        "data": {
+          "type": "object",
+          "description": "The actual resume content.",
+          "properties": {
+            "personalInfo": { "type": "object" },
+            "summary": { "type": "string" },
+            "experience": { "type": "array" },
+            "education": { "type": "array" },
+            "skills": { "type": "array" },
+            "projects": { "type": "array" },
+            "theme": { "type": "string" },
+            "accentColor": { "type": "string" }
+          }
+        }
+      },
+      "required": ["uid", "title", "data"]
+    }
+  },
+  "firestore": {
+    "/users/{uid}": {
+      "schema": "UserProfile",
+      "description": "Collection of user profiles."
+    },
+    "/resumes/{resumeId}": {
+      "schema": "Resume",
+      "description": "Collection of resumes."
+    }
+  }
+}

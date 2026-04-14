@@ -1,0 +1,271 @@
+import React, { useEffect, useState } from 'react';
+import { User } from 'firebase/auth';
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import { db } from '../firebase';
+import { doc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { ChevronLeft, Save, Download, Layout, Palette, Eye, Edit3, Sparkles, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
+import { handleFirestoreError, OperationType } from '../lib/firestore-errors';
+import { ResumeData, Resume } from '../types';
+import ResumeForm from '../components/ResumeForm';
+import AIChatbot from '../components/AIChatbot';
+import { GoogleGenAI, ThinkingLevel } from '@google/genai';
+
+import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
+import ClassicTemplatePDF from '../components/templates/ClassicTemplatePDF';
+
+const INITIAL_DATA: ResumeData = {
+  personalInfo: { fullName: '', email: '', phone: '', address: '', linkedin: '', portfolio: '' },
+  profileImage: null,
+  showProfileImage: false,
+  summary: '',
+  experience: [],
+  education: [],
+  certifications: [],
+  skills: [],
+  languages: [],
+  projects: [],
+  theme: 'modern',
+  accentColor: '#4f46e5',
+  skillDisplayStyle: 'text',
+  languageDisplayStyle: 'text',
+  customSections: []
+};
+
+export default function BuilderPage({ user }: { user: User }) {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [resume, setResume] = useState<Resume | null>(null);
+  const [data, setData] = useState<ResumeData>(INITIAL_DATA);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [viewMode, setViewMode] = useState<'edit' | 'preview'>('edit');
+
+  useEffect(() => {
+    if (!id) return;
+    const fetchResume = async () => {
+      try {
+        const docSnap = await getDoc(doc(db, 'resumes', id));
+        if (docSnap.exists()) {
+          const resumeData = docSnap.data() as Resume;
+          if (resumeData.uid !== user.uid) {
+            navigate('/dashboard');
+            return;
+          }
+          setResume({ id: docSnap.id, ...resumeData });
+          setData(resumeData.data);
+        } else {
+          navigate('/dashboard');
+        }
+      } catch (err) {
+        console.error("Error fetching resume:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchResume();
+  }, [id, user.uid, navigate]);
+
+  const handleSave = async () => {
+    if (!id || !user) return;
+    setSaving(true);
+    const path = `resumes/${id}`;
+    try {
+      await updateDoc(doc(db, 'resumes', id), {
+        title: resume?.title || 'Untitled Resume',
+        data,
+        lastModified: serverTimestamp()
+      });
+      toast.success("Resume saved successfully!");
+    } catch (err) {
+      console.error("Error saving resume:", err);
+      toast.error("Failed to save resume.");
+      try {
+        handleFirestoreError(err, OperationType.UPDATE, path);
+      } catch (e) {
+        // Error already logged by handleFirestoreError
+      }
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleAIImprove = async (section: string, content: string) => {
+    try {
+      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+      const response = await ai.models.generateContent({
+        model: "gemini-3.1-pro-preview",
+        contents: `Improve this professional resume ${section} to be more impactful, concise, and professional: "${content}". 
+        Use industry-specific keywords and strong action verbs (e.g., "Spearheaded", "Orchestrated", "Optimized") where appropriate.`,
+        config: { 
+          systemInstruction: "You are an expert resume writer and career coach. Provide only the improved text without quotes or preamble.",
+          thinkingConfig: { thinkingLevel: ThinkingLevel.HIGH }
+        }
+      });
+      return response.text;
+    } catch (err) {
+      console.error("AI Error:", err);
+      return content;
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <Loader2 className="animate-spin text-indigo-600 w-10 h-10" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="h-screen flex flex-col bg-slate-50 font-sans overflow-hidden">
+      {/* Action Bar */}
+      <header className="bg-white border-b border-slate-200 px-4 sm:px-8 py-3 flex items-center justify-between z-50 shadow-sm">
+        <div className="flex items-center gap-4">
+          <Link to="/dashboard" className="p-2 hover:bg-slate-100 rounded-lg transition-all text-slate-500">
+            <ChevronLeft className="w-5 h-5" />
+          </Link>
+          <Link to="/" className="flex items-center gap-2 hover:opacity-90 transition-opacity">
+            <div className="logo-icon-gradient p-1.5 rounded-full shadow-lg shadow-brand-indigo/20 relative group">
+              <Sparkles className="text-white w-4 h-4" />
+              <div className="absolute bottom-1 left-1 w-0.5 h-0.5 bg-white rounded-full opacity-80" />
+            </div>
+            <span className="text-lg font-black tracking-tighter hidden sm:block">
+              <span className="text-brand-indigo">Chat</span><span className="text-brand-pink">CV</span>
+            </span>
+          </Link>
+          <div className="h-6 w-px bg-slate-200 hidden sm:block" />
+          <div className="hidden sm:block">
+            <input
+              type="text"
+              value={resume?.title || ''}
+              onChange={(e) => setResume(prev => prev ? { ...prev, title: e.target.value } : null)}
+              className="text-lg font-bold text-slate-900 bg-transparent border-none focus:ring-0 p-0 w-48"
+            />
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 sm:gap-4">
+          <div className="flex bg-slate-100 p-1 rounded-xl sm:hidden">
+            <button
+              onClick={() => setViewMode('edit')}
+              className={`p-2 rounded-lg transition-all ${viewMode === 'edit' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500'}`}
+            >
+              <Edit3 className="w-5 h-5" />
+            </button>
+            <button
+              onClick={() => setViewMode('preview')}
+              className={`p-2 rounded-lg transition-all ${viewMode === 'preview' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500'}`}
+            >
+              <Eye className="w-5 h-5" />
+            </button>
+          </div>
+
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="flex items-center gap-2 bg-white border border-slate-200 text-slate-700 px-4 py-2 rounded-xl font-bold hover:bg-slate-50 transition-all disabled:opacity-50"
+          >
+            {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+            <span className="hidden sm:inline">Save</span>
+          </button>
+          <PDFDownloadLink
+            document={<ClassicTemplatePDF data={data} />}
+            fileName={`${data.personalInfo.fullName || 'Resume'}.pdf`}
+            className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-xl font-bold hover:bg-indigo-700 shadow-lg shadow-indigo-100 transition-all"
+          >
+            {({ loading: pdfLoading }) => (
+              <>
+                {pdfLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+                <span className="hidden sm:inline">{pdfLoading ? 'Preparing...' : 'Download PDF'}</span>
+              </>
+            )}
+          </PDFDownloadLink>
+        </div>
+      </header>
+
+      <main className="flex-1 flex overflow-hidden">
+        {/* Left Panel: Forms */}
+        <div className={`flex-1 overflow-y-auto p-4 sm:p-8 bg-white border-r border-slate-200 ${viewMode === 'preview' ? 'hidden sm:block' : 'block'}`}>
+          <div className="max-w-2xl mx-auto">
+            <div className="flex items-center gap-2 mb-8 text-slate-400">
+              <Layout className="w-5 h-5" />
+              <span className="text-sm font-bold uppercase tracking-wider">Editor</span>
+            </div>
+            
+            <ResumeForm data={data} setData={setData} onAIImprove={handleAIImprove} />
+            
+            <div className="mt-12 pt-8 border-t border-slate-100">
+              <div className="flex items-center gap-2 mb-6 text-slate-400">
+                <Palette className="w-5 h-5" />
+                <span className="text-sm font-bold uppercase tracking-wider">Themes & Styling</span>
+              </div>
+              
+              <div className="grid grid-cols-3 gap-4 mb-8">
+                {['classic', 'modern', 'creative', 'tech'].map((t) => (
+                  <button
+                    key={t}
+                    onClick={() => setData({ ...data, theme: t as any })}
+                    className={`p-4 rounded-2xl border-2 transition-all capitalize font-bold ${data.theme === t ? 'border-indigo-600 bg-indigo-50 text-indigo-600' : 'border-slate-100 bg-slate-50 text-slate-500 hover:border-slate-200'}`}
+                  >
+                    {t === 'tech' ? 'Tech/Dev' : t}
+                  </button>
+                ))}
+              </div>
+
+              <div className="flex flex-col gap-6">
+                <div className="flex flex-col gap-4">
+                  <span className="text-sm font-bold text-slate-700">Accent Color:</span>
+                  <div className="flex gap-2">
+                    {['#4f46e5', '#0ea5e9', '#10b981', '#f43f5e', '#f59e0b', '#111827'].map((c) => (
+                      <button
+                        key={c}
+                        onClick={() => setData({ ...data, accentColor: c })}
+                        className={`w-8 h-8 rounded-full border-2 transition-all ${data.accentColor === c ? 'border-slate-900 scale-110' : 'border-transparent'}`}
+                        style={{ backgroundColor: c }}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-4">
+                  <span className="text-sm font-bold text-slate-700">Skill Display Style:</span>
+                  <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                    {[
+                      { id: 'text', label: 'Text Only' },
+                      { id: 'stars', label: 'Stars' },
+                      { id: 'dots', label: 'Dots' },
+                      { id: 'bar', label: 'Progress Bar' },
+                      { id: 'circle', label: 'Circle' }
+                    ].map((s) => (
+                      <button
+                        key={s.id}
+                        onClick={() => setData({ ...data, skillDisplayStyle: s.id as any })}
+                        className={`px-3 py-2 rounded-xl border-2 text-xs font-bold transition-all ${data.skillDisplayStyle === s.id ? 'border-indigo-600 bg-indigo-50 text-indigo-600' : 'border-slate-100 bg-slate-50 text-slate-500 hover:border-slate-200'}`}
+                      >
+                        {s.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Panel: Live PDF Preview */}
+        <div className={`flex-1 overflow-hidden bg-slate-200 ${viewMode === 'edit' ? 'hidden sm:block' : 'block'}`}>
+          <PDFViewer
+            width="100%"
+            height="100%"
+            showToolbar={false}
+            style={{ border: 'none' }}
+          >
+            <ClassicTemplatePDF data={data} />
+          </PDFViewer>
+        </div>
+      </main>
+      <AIChatbot />
+    </div>
+  );
+}
