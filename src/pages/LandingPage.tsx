@@ -329,13 +329,23 @@ export default function LandingPage({ user }: { user: FirebaseUser | null }) {
           </div>
         </div>
         
-        <div className="max-w-7xl mx-auto pt-8 border-t border-slate-50 flex flex-col md:flex-row justify-between items-center gap-4 text-slate-400 text-xs font-bold uppercase tracking-widest">
-          <p>© 2026 ChatCV Builder. All rights reserved.</p>
-          <div className="flex gap-8">
-            <a href="#" className="hover:text-slate-600 transition-colors">Twitter</a>
-            <a href="#" className="hover:text-slate-600 transition-colors">LinkedIn</a>
-            <a href="#" className="hover:text-slate-600 transition-colors">Instagram</a>
-          </div>
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center md:justify-start w-full pt-8 mt-12 border-t border-gray-200 gap-2 md:gap-4">
+          <p className="text-sm text-gray-500 font-medium text-center md:text-left">
+            © {new Date().getFullYear()} ChatCV. All rights reserved.
+          </p>
+          
+          {/* Divider dot (Visible only on desktop) */}
+          <span className="hidden md:block text-gray-300">•</span>
+          
+          <p className="text-sm text-gray-500 font-medium flex items-center gap-1.5">
+            Built by
+            <span className="relative group cursor-pointer ml-1">
+              <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 tracking-wider transition-all duration-300 group-hover:from-blue-500 group-hover:to-indigo-500">
+                R-Labs
+              </span>
+              <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-gradient-to-r from-blue-600 to-indigo-600 transition-all duration-300 group-hover:w-full rounded-full"></span>
+            </span>
+          </p>
         </div>
       </footer>
     </div>
