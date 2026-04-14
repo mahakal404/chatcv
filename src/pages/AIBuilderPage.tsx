@@ -24,11 +24,15 @@ export default function AIBuilderPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 font-sans overflow-hidden">
       <div className="max-w-4xl mx-auto px-4 py-20 flex flex-col items-center justify-center text-center">
-        {/* Glowing Icon with Animated Ring */}
-        <div className="relative mb-10">
-          <div className="absolute inset-0 bg-blue-500 blur-3xl opacity-20 rounded-full animate-pulse"></div>
-          <div className="relative bg-white p-8 rounded-[32px] shadow-[0_0_40px_rgba(59,130,246,0.6)] border border-blue-100 flex items-center justify-center animate-pulse">
-            <SparklesIcon className="w-16 h-16 text-blue-600" />
+        {/* Glowing Icon with Premium Energy Source Animation */}
+        <div className="relative mb-8">
+          {/* The Outer Radial Glow (Pulsing) */}
+          <div className="absolute inset-0 bg-blue-500 blur-[30px] opacity-40 rounded-full animate-pulse"></div>
+          
+          {/* The Inner Icon Wrapper (Floating & Rotating) */}
+          <div className="relative bg-white p-6 rounded-full shadow-2xl border border-gray-100 animate-energySource">
+            {/* The Icon itself (Sharp & Glowing) */}
+            <SparklesIcon className="w-12 h-12 text-blue-600 drop-shadow-[0_0_8px_rgba(59,130,246,0.7)]" />
           </div>
         </div>
 
