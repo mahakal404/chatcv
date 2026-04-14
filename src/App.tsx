@@ -8,6 +8,7 @@ import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import BuilderPage from './pages/BuilderPage';
 import AIBuilderPage from './pages/AIBuilderPage';
+import AIAssistantPage from './pages/AIAssistantPage';
 
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
@@ -38,6 +39,7 @@ export default function App() {
         <Route path="/dashboard" element={user ? <DashboardPage user={user} /> : <Navigate to="/login" />} />
         <Route path="/builder/:id?" element={user ? <BuilderPage user={user} /> : <Navigate to="/login" />} />
         <Route path="/ai-builder" element={user ? <AIBuilderPage user={user} /> : <Navigate to="/login" />} />
+        <Route path="/ai-assistant" element={user ? <AIAssistantPage user={user} /> : <Navigate to="/login" />} />
       </Routes>
     </Router>
   );
