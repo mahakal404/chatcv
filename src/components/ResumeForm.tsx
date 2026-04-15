@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { ResumeData, Experience, Education, Project, Certification, Skill, Language } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
-import { User, Briefcase, GraduationCap, Code, Folder, Sparkles, Plus, Trash2, ChevronDown, ChevronUp, Award, Calculator, ExternalLink, Layers, Languages, Camera, Image as ImageIcon, CheckCircle2 } from 'lucide-react';
+import { User, Briefcase, GraduationCap, Code, Folder, Sparkles, Plus, Trash2, ChevronDown, ChevronUp, Award, Calculator, ExternalLink, Layers, Languages, Camera, Image as ImageIcon, CheckCircle2, X } from 'lucide-react';
 
 interface ResumeFormProps {
   data: ResumeData;
@@ -707,15 +707,16 @@ export default function ResumeForm({ data, setData, onAIImprove }: ResumeFormPro
                 />
                 <div className="space-y-3">
                   {data.skills.map((skill, index) => (
-                    <div key={skill.id || index} className="flex items-center gap-3 bg-indigo-50 p-3 rounded-xl group">
-                      <div className="flex-1">
+                    <div key={skill.id || index} className="flex flex-col md:flex-row items-start md:items-center gap-3 w-full p-4 md:p-3 bg-indigo-50 md:bg-indigo-50 rounded-xl border border-indigo-100 md:border-indigo-100 mb-0 relative group">
+                      <div className="w-full md:flex-1">
                         <input
                           type="text"
                           value={skill.name || ''}
                           onChange={(e) => updateSkill(index, 'name', e.target.value)}
-                          className="w-full bg-transparent border-none focus:ring-0 text-sm font-bold text-indigo-600 p-0"
+                          placeholder="Skill name..."
+                          className="w-full bg-white md:bg-transparent border border-slate-200 md:border-none rounded-lg md:rounded-none p-3 md:p-0 focus:outline-none focus:ring-2 md:focus:ring-0 focus:ring-indigo-500 text-sm font-bold text-indigo-600"
                         />
-                        <div className="flex gap-1 mt-1">
+                        <div className="flex gap-1 mt-2 md:mt-1">
                           {[1, 2, 3, 4].map((i) => {
                             const dots = skill.level === 'Beginner' ? 1 : skill.level === 'Intermediate' ? 2 : skill.level === 'Advanced' ? 3 : 4;
                             return (
@@ -730,19 +731,31 @@ export default function ResumeForm({ data, setData, onAIImprove }: ResumeFormPro
                       <select
                         value={skill.level || 'Intermediate'}
                         onChange={(e) => updateSkill(index, 'level', e.target.value as any)}
-                        className="bg-white border border-slate-200 rounded-lg px-2 py-1 text-xs font-bold text-slate-600 focus:outline-none cursor-pointer"
+                        className="w-full md:w-40 bg-white border border-slate-200 rounded-lg px-3 py-2.5 md:px-2 md:py-1 text-sm md:text-xs font-bold text-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 md:focus:ring-0 cursor-pointer"
                       >
                         <option value="Beginner">Beginner</option>
                         <option value="Intermediate">Intermediate</option>
                         <option value="Advanced">Advanced</option>
                         <option value="Expert">Expert</option>
                       </select>
-                      <button onClick={() => removeSkill(index)} className="text-slate-400 hover:text-red-600 opacity-0 group-hover:opacity-100 transition-all">
+                      {/* Mobile: full-width delete button. Desktop: icon only */}
+                      <button 
+                        onClick={() => removeSkill(index)} 
+                        className="w-full md:w-auto py-2 md:py-0 text-red-500 md:text-slate-400 md:hover:text-red-600 font-bold text-sm md:text-base flex items-center justify-center md:justify-start gap-2 border border-red-200 md:border-none rounded-lg md:rounded-none bg-red-50 md:bg-transparent md:opacity-0 md:group-hover:opacity-100 transition-all"
+                      >
                         <Trash2 className="w-4 h-4" />
+                        <span className="md:hidden">Remove Skill</span>
                       </button>
                     </div>
                   ))}
                 </div>
+                <button
+                  onClick={() => addSkill('New Skill')}
+                  className="w-full py-3 mt-2 border-2 border-dashed border-indigo-300 text-indigo-600 font-semibold rounded-xl flex items-center justify-center gap-2 hover:bg-indigo-50 transition-colors"
+                >
+                  <Plus className="w-5 h-5" />
+                  Add New Skill
+                </button>
               </div>
             </motion.div>
           )}
@@ -1021,13 +1034,17 @@ function ScoreInput({ label, value, onChange }: { label: string, value: string, 
   const [obtained, setObtained] = useState('');
   const [total, setTotal] = useState('');
 
+  const ob = parseFloat(obtained);
+  const tot = parseFloat(total);
+  const isValid = !isNaN(ob) && !isNaN(tot) && tot !== 0;
+  const livePercentage = isValid ? ((ob / tot) * 100).toFixed(2) : null;
+
   const calculate = () => {
-    const ob = parseFloat(obtained);
-    const tot = parseFloat(total);
-    if (!isNaN(ob) && !isNaN(tot) && tot !== 0) {
-      const result = ((ob / tot) * 100).toFixed(2);
-      onChange(result + '%');
+    if (isValid) {
+      onChange(livePercentage + '%');
       setShowCalc(false);
+      setObtained('');
+      setTotal('');
     }
   };
 
@@ -1036,7 +1053,7 @@ function ScoreInput({ label, value, onChange }: { label: string, value: string, 
       <div className="flex items-center justify-between mb-1 ml-1">
         <label className="block text-xs font-bold text-slate-500 uppercase">{label}</label>
         <button 
-          onClick={() => setShowCalc(!showCalc)}
+          onClick={() => setShowCalc(true)}
           className="flex items-center gap-1 text-[10px] font-black text-indigo-600 hover:text-indigo-700 uppercase tracking-wider"
         >
           <Calculator className="w-3 h-3" />
@@ -1047,27 +1064,77 @@ function ScoreInput({ label, value, onChange }: { label: string, value: string, 
         type="text"
         value={value || ''}
         onChange={(e) => onChange(e.target.value)}
+        placeholder="e.g., 8.5 CGPA or 85%"
         className="w-full p-3 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm font-medium"
       />
 
+      {/* Calculator Modal Overlay */}
       <AnimatePresence>
         {showCalc && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="absolute z-10 mt-2 p-4 bg-white border border-slate-200 rounded-xl shadow-xl w-full sm:w-64"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4"
+            onClick={(e) => { if (e.target === e.currentTarget) setShowCalc(false); }}
           >
-            <div className="space-y-3">
-              <Input label="Obtained Marks" value={obtained} onChange={setObtained} type="number" />
-              <Input label="Total Marks" value={total} onChange={setTotal} type="number" />
-              <button
-                onClick={calculate}
-                className="w-full py-2 bg-indigo-600 text-white rounded-lg font-bold text-xs hover:bg-indigo-700 transition-all"
-              >
-                Apply Percentage
-              </button>
-            </div>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ type: 'spring', duration: 0.3 }}
+              className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl"
+            >
+              {/* Modal Header */}
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center">
+                    <Calculator className="w-5 h-5 text-indigo-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-slate-900 text-base">Percentage Calculator</h3>
+                    <p className="text-xs text-slate-400">Enter marks to calculate %</p>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => setShowCalc(false)}
+                  className="p-2 hover:bg-slate-100 rounded-xl transition-all text-slate-400 hover:text-slate-600"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Inputs */}
+              <div className="space-y-4">
+                <Input label="Obtained Marks" value={obtained} onChange={setObtained} type="number" placeholder="e.g., 450" />
+                <Input label="Total Marks" value={total} onChange={setTotal} type="number" placeholder="e.g., 500" />
+              </div>
+
+              {/* Live Preview */}
+              {livePercentage && (
+                <div className="mt-4 p-4 bg-indigo-50 rounded-xl border border-indigo-100 text-center">
+                  <p className="text-xs font-bold text-indigo-400 uppercase tracking-wider mb-1">Calculated Percentage</p>
+                  <p className="text-3xl font-black text-indigo-600">{livePercentage}%</p>
+                </div>
+              )}
+
+              {/* Actions */}
+              <div className="flex gap-3 mt-6">
+                <button
+                  onClick={() => setShowCalc(false)}
+                  className="flex-1 py-3 bg-slate-100 text-slate-600 rounded-xl font-bold text-sm hover:bg-slate-200 transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={calculate}
+                  disabled={!isValid}
+                  className="flex-1 py-3 bg-indigo-600 text-white rounded-xl font-bold text-sm hover:bg-indigo-700 transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-lg shadow-indigo-200"
+                >
+                  Apply Percentage
+                </button>
+              </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
