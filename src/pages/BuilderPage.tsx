@@ -31,11 +31,19 @@ function useIsMobile(breakpoint = 640) {
   return isMobile;
 }
 
-// ─── Debounce Hook ─────────────────────────────────────────────
+// ─── Debounce Hook (Deep Clone) ─────────────────────────────
 function useDebounce<T>(value: T, delay: number): T {
   const [debounced, setDebounced] = useState(value);
   useEffect(() => {
-    const timer = setTimeout(() => setDebounced(value), delay);
+    const timer = setTimeout(() => {
+      // Deep clone to break object reference equality
+      // This forces React.memo / useMemo to detect changes
+      try {
+        setDebounced(JSON.parse(JSON.stringify(value)));
+      } catch {
+        setDebounced(value);
+      }
+    }, delay);
     return () => clearTimeout(timer);
   }, [value, delay]);
   return debounced;
@@ -210,8 +218,14 @@ export default function BuilderPage({ user }: { user: User }) {
   const [saving, setSaving] = useState(false);
   const [viewMode, setViewMode] = useState<'edit' | 'preview'>('edit');
   const [saveStatus, setSaveStatus] = useState<'Typing...' | 'Saving...' | '✅ Saved'>('✅ Saved');
+  const [isMounted, setIsMounted] = useState(false);
   const isMobile = useIsMobile();
   const isInitialLoad = useRef(true);
+
+  // Hydration fix: delay PDFViewer until client is fully mounted
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Single 1000ms debounce for both PDF preview and auto-save (premium feel)
   const debouncedData = useDebounce(data, 1000);
@@ -521,7 +535,23 @@ export default function BuilderPage({ user }: { user: User }) {
 
         {/* Right Panel: Live PDF Preview */}
         <div className={`flex-1 overflow-hidden bg-slate-200 ${viewMode === 'edit' ? 'hidden sm:block' : 'block'}`}>
-          {isMobile ? (
+          {!isMounted ? (
+            /* Hydration guard: show loading skeleton until client is fully mounted */
+            <div className="flex flex-col items-center justify-center h-full gap-4">
+              <div className="relative">
+                <div className="w-16 h-16 rounded-2xl bg-white shadow-lg flex items-center justify-center">
+                  <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
+                </div>
+                <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-indigo-500 flex items-center justify-center shadow-md">
+                  <Sparkles className="w-3 h-3 text-white" />
+                </div>
+              </div>
+              <div className="text-center">
+                <p className="text-sm font-bold text-slate-700">Initializing Preview</p>
+                <p className="text-xs text-slate-400 mt-1">Loading PDF engine...</p>
+              </div>
+            </div>
+          ) : isMobile ? (
             <MobilePDFPreview
               blobUrl={instance.url}
               loading={instance.loading}
@@ -533,7 +563,7 @@ export default function BuilderPage({ user }: { user: User }) {
               showToolbar={false}
               style={{ border: 'none' }}
             >
-              <ClassicTemplatePDF data={data} />
+              <ClassicTemplatePDF data={debouncedData} />
             </PDFViewer>
           )}
         </div>
