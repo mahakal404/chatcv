@@ -3,7 +3,7 @@ import { User } from 'firebase/auth';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { db } from '../firebase';
 import { doc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
-import { ChevronLeft, Save, Download, Layout, Palette, Eye, Edit3, Sparkles, Loader2, ZoomIn, ZoomOut, RotateCcw, CheckCircle2, CloudOff, Cloud } from 'lucide-react';
+import { ChevronLeft, Save, Download, Layout, Palette, Eye, Edit3, Sparkles, Loader2, ZoomIn, ZoomOut, RotateCcw, CheckCircle2, CloudOff, Cloud, Pencil } from 'lucide-react';
 import { toast } from 'sonner';
 import { handleFirestoreError, OperationType } from '../lib/firestore-errors';
 import { ResumeData, Resume } from '../types';
@@ -209,15 +209,12 @@ export default function BuilderPage({ user }: { user: User }) {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [viewMode, setViewMode] = useState<'edit' | 'preview'>('edit');
-  const [saveStatus, setSaveStatus] = useState<'Saved' | 'Saving...' | 'Unsaved'>('Saved');
+  const [saveStatus, setSaveStatus] = useState<'Typing...' | 'Saving...' | '✅ Saved'>('✅ Saved');
   const isMobile = useIsMobile();
   const isInitialLoad = useRef(true);
 
-  // Debounce resume data updates to avoid excessive PDF re-renders
-  const debouncedData = useDebounce(data, 800);
-
-  // Debounce for auto-save (slightly longer than PDF debounce)
-  const debouncedDataForSave = useDebounce(data, 1500);
+  // Single 1000ms debounce for both PDF preview and auto-save (premium feel)
+  const debouncedData = useDebounce(data, 1000);
 
   // Generate PDF instance using the usePDF hook for mobile preview
   const pdfDocument = useMemo(
@@ -287,25 +284,29 @@ export default function BuilderPage({ user }: { user: User }) {
     fetchResume();
   }, [id, user.uid, navigate, draftKey]);
 
-  // ─── Mark as Unsaved when data changes ───────────────────────
+  // ─── Live Magic: Mark as "Typing..." instantly on keystroke ───
   useEffect(() => {
     if (isInitialLoad.current) return;
-    setSaveStatus('Unsaved');
+    setSaveStatus('Typing...');
   }, [data]);
 
-  // ─── Auto-save to LocalStorage on debounced changes ──────────
+  // ─── Live Magic: Auto-save to LocalStorage after debounce ────
   useEffect(() => {
     if (isInitialLoad.current || !draftKey) return;
     setSaveStatus('Saving...');
-    try {
-      const dataWithTimestamp = { ...debouncedDataForSave, _savedAt: Date.now() };
-      localStorage.setItem(draftKey, JSON.stringify(dataWithTimestamp));
-      setSaveStatus('Saved');
-    } catch (err) {
-      console.error('LocalStorage save failed:', err);
-      setSaveStatus('Unsaved');
-    }
-  }, [debouncedDataForSave, draftKey]);
+    // Use a micro-delay to make the "Saving..." state visible in the UI
+    const saveTimer = setTimeout(() => {
+      try {
+        const dataWithTimestamp = { ...debouncedData, _savedAt: Date.now() };
+        localStorage.setItem(draftKey, JSON.stringify(dataWithTimestamp));
+        setSaveStatus('✅ Saved');
+      } catch (err) {
+        console.error('LocalStorage save failed:', err);
+        setSaveStatus('Typing...');
+      }
+    }, 150);
+    return () => clearTimeout(saveTimer);
+  }, [debouncedData, draftKey]);
 
   const handleSave = async () => {
     if (!id || !user) return;
@@ -319,7 +320,7 @@ export default function BuilderPage({ user }: { user: User }) {
       });
       // Clear local draft after successful cloud save
       if (draftKey) localStorage.removeItem(draftKey);
-      setSaveStatus('Saved');
+      setSaveStatus('✅ Saved');
       toast.success("Resume saved to cloud!");
     } catch (err) {
       console.error("Error saving resume:", err);
@@ -387,24 +388,24 @@ export default function BuilderPage({ user }: { user: User }) {
               className="text-lg font-bold text-slate-900 bg-transparent border-none focus:ring-0 p-0 w-48"
             />
           </div>
-          {/* Auto-Save Status Indicator */}
-          <div className="hidden sm:flex items-center gap-1.5 ml-2">
-            {saveStatus === 'Saved' && (
-              <div className="flex items-center gap-1 text-emerald-500">
+          {/* Live Magic Status Indicator */}
+          <div className="flex items-center gap-1.5 ml-1 sm:ml-2">
+            {saveStatus === '✅ Saved' && (
+              <div className="flex items-center gap-1 text-emerald-500 transition-all">
                 <CheckCircle2 className="w-3.5 h-3.5" />
-                <span className="text-[10px] font-bold uppercase tracking-wider">Saved</span>
+                <span className="hidden sm:inline text-[10px] font-bold uppercase tracking-wider">Saved</span>
               </div>
             )}
             {saveStatus === 'Saving...' && (
-              <div className="flex items-center gap-1 text-amber-500">
+              <div className="flex items-center gap-1 text-amber-500 transition-all">
                 <Cloud className="w-3.5 h-3.5 animate-pulse" />
-                <span className="text-[10px] font-bold uppercase tracking-wider">Saving...</span>
+                <span className="hidden sm:inline text-[10px] font-bold uppercase tracking-wider">Saving...</span>
               </div>
             )}
-            {saveStatus === 'Unsaved' && (
-              <div className="flex items-center gap-1 text-slate-400">
-                <CloudOff className="w-3.5 h-3.5" />
-                <span className="text-[10px] font-bold uppercase tracking-wider">Unsaved</span>
+            {saveStatus === 'Typing...' && (
+              <div className="flex items-center gap-1 text-indigo-400 transition-all">
+                <Pencil className="w-3.5 h-3.5 animate-pulse" />
+                <span className="hidden sm:inline text-[10px] font-bold uppercase tracking-wider">Typing...</span>
               </div>
             )}
           </div>
