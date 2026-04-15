@@ -3,7 +3,7 @@ import { User } from 'firebase/auth';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { db } from '../firebase';
 import { doc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
-import { ChevronLeft, Save, Download, Layout, Palette, Eye, Edit3, Sparkles, Loader2, ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
+import { ChevronLeft, Save, Download, Layout, Palette, Eye, Edit3, Sparkles, Loader2, ZoomIn, ZoomOut, RotateCcw, CheckCircle2, CloudOff, Cloud } from 'lucide-react';
 import { toast } from 'sonner';
 import { handleFirestoreError, OperationType } from '../lib/firestore-errors';
 import { ResumeData, Resume } from '../types';
@@ -209,10 +209,15 @@ export default function BuilderPage({ user }: { user: User }) {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [viewMode, setViewMode] = useState<'edit' | 'preview'>('edit');
+  const [saveStatus, setSaveStatus] = useState<'Saved' | 'Saving...' | 'Unsaved'>('Saved');
   const isMobile = useIsMobile();
+  const isInitialLoad = useRef(true);
 
   // Debounce resume data updates to avoid excessive PDF re-renders
   const debouncedData = useDebounce(data, 800);
+
+  // Debounce for auto-save (slightly longer than PDF debounce)
+  const debouncedDataForSave = useDebounce(data, 1500);
 
   // Generate PDF instance using the usePDF hook for mobile preview
   const pdfDocument = useMemo(
@@ -226,6 +231,10 @@ export default function BuilderPage({ user }: { user: User }) {
     updateInstance(<ClassicTemplatePDF data={debouncedData} />);
   }, [debouncedData, updateInstance]);
 
+  // ─── LocalStorage Auto-Save Key ──────────────────────────────
+  const draftKey = id ? `chatCV_draft_${id}` : null;
+
+  // ─── Load from Firestore, then check for newer local draft ───
   useEffect(() => {
     if (!id) return;
     const fetchResume = async () => {
@@ -238,6 +247,32 @@ export default function BuilderPage({ user }: { user: User }) {
             return;
           }
           setResume({ id: docSnap.id, ...resumeData });
+          
+          // Check for a local draft
+          const localDraft = draftKey ? localStorage.getItem(draftKey) : null;
+          if (localDraft) {
+            try {
+              const parsed = JSON.parse(localDraft);
+              // If local draft has a timestamp newer than the Firestore save, offer to restore
+              if (parsed._savedAt && resumeData.lastModified) {
+                const localTime = parsed._savedAt;
+                const firestoreTime = (resumeData.lastModified as any)?.toMillis?.() || 0;
+                if (localTime > firestoreTime) {
+                  const { _savedAt, ...draftData } = parsed;
+                  setData(draftData);
+                  toast.info('Restored your unsaved local draft.', { duration: 4000 });
+                  // Mark initial load done so auto-save doesn't re-trigger immediately
+                  setTimeout(() => { isInitialLoad.current = false; }, 2000);
+                  setLoading(false);
+                  return;
+                }
+              }
+            } catch {
+              // Invalid JSON in localStorage, ignore
+              if (draftKey) localStorage.removeItem(draftKey);
+            }
+          }
+
           setData(resumeData.data);
         } else {
           navigate('/dashboard');
@@ -246,10 +281,31 @@ export default function BuilderPage({ user }: { user: User }) {
         console.error("Error fetching resume:", err);
       } finally {
         setLoading(false);
+        setTimeout(() => { isInitialLoad.current = false; }, 2000);
       }
     };
     fetchResume();
-  }, [id, user.uid, navigate]);
+  }, [id, user.uid, navigate, draftKey]);
+
+  // ─── Mark as Unsaved when data changes ───────────────────────
+  useEffect(() => {
+    if (isInitialLoad.current) return;
+    setSaveStatus('Unsaved');
+  }, [data]);
+
+  // ─── Auto-save to LocalStorage on debounced changes ──────────
+  useEffect(() => {
+    if (isInitialLoad.current || !draftKey) return;
+    setSaveStatus('Saving...');
+    try {
+      const dataWithTimestamp = { ...debouncedDataForSave, _savedAt: Date.now() };
+      localStorage.setItem(draftKey, JSON.stringify(dataWithTimestamp));
+      setSaveStatus('Saved');
+    } catch (err) {
+      console.error('LocalStorage save failed:', err);
+      setSaveStatus('Unsaved');
+    }
+  }, [debouncedDataForSave, draftKey]);
 
   const handleSave = async () => {
     if (!id || !user) return;
@@ -261,7 +317,10 @@ export default function BuilderPage({ user }: { user: User }) {
         data,
         lastModified: serverTimestamp()
       });
-      toast.success("Resume saved successfully!");
+      // Clear local draft after successful cloud save
+      if (draftKey) localStorage.removeItem(draftKey);
+      setSaveStatus('Saved');
+      toast.success("Resume saved to cloud!");
     } catch (err) {
       console.error("Error saving resume:", err);
       toast.error("Failed to save resume.");
@@ -327,6 +386,27 @@ export default function BuilderPage({ user }: { user: User }) {
               onChange={(e) => setResume(prev => prev ? { ...prev, title: e.target.value } : null)}
               className="text-lg font-bold text-slate-900 bg-transparent border-none focus:ring-0 p-0 w-48"
             />
+          </div>
+          {/* Auto-Save Status Indicator */}
+          <div className="hidden sm:flex items-center gap-1.5 ml-2">
+            {saveStatus === 'Saved' && (
+              <div className="flex items-center gap-1 text-emerald-500">
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                <span className="text-[10px] font-bold uppercase tracking-wider">Saved</span>
+              </div>
+            )}
+            {saveStatus === 'Saving...' && (
+              <div className="flex items-center gap-1 text-amber-500">
+                <Cloud className="w-3.5 h-3.5 animate-pulse" />
+                <span className="text-[10px] font-bold uppercase tracking-wider">Saving...</span>
+              </div>
+            )}
+            {saveStatus === 'Unsaved' && (
+              <div className="flex items-center gap-1 text-slate-400">
+                <CloudOff className="w-3.5 h-3.5" />
+                <span className="text-[10px] font-bold uppercase tracking-wider">Unsaved</span>
+              </div>
+            )}
           </div>
         </div>
 
