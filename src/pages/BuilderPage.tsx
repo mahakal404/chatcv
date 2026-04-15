@@ -11,7 +11,7 @@ import ResumeForm from '../components/ResumeForm';
 import AIChatbot from '../components/AIChatbot';
 import { GoogleGenAI, ThinkingLevel } from '@google/genai';
 
-import { PDFViewer, PDFDownloadLink, usePDF } from '@react-pdf/renderer';
+import { PDFDownloadLink, usePDF } from '@react-pdf/renderer';
 import ClassicTemplatePDF from '../components/templates/ClassicTemplatePDF';
 import * as pdfjsLib from 'pdfjs-dist';
 
@@ -222,7 +222,7 @@ export default function BuilderPage({ user }: { user: User }) {
   const isMobile = useIsMobile();
   const isInitialLoad = useRef(true);
 
-  // Hydration fix: delay PDFViewer until client is fully mounted
+  // Hydration fix: delay PDF preview until client is fully mounted
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -556,15 +556,30 @@ export default function BuilderPage({ user }: { user: User }) {
               blobUrl={instance.url}
               loading={instance.loading}
             />
+          ) : instance.loading || !instance.url ? (
+            /* Desktop: Loading state while usePDF generates the blob */
+            <div className="flex flex-col items-center justify-center h-full gap-4">
+              <div className="relative">
+                <div className="w-16 h-16 rounded-2xl bg-white shadow-lg flex items-center justify-center">
+                  <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
+                </div>
+                <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-indigo-500 flex items-center justify-center shadow-md">
+                  <Sparkles className="w-3 h-3 text-white" />
+                </div>
+              </div>
+              <div className="text-center">
+                <p className="text-sm font-bold text-slate-700">Rendering Preview</p>
+                <p className="text-xs text-slate-400 mt-1">Generating your resume...</p>
+              </div>
+            </div>
           ) : (
-            <PDFViewer
-              width="100%"
-              height="100%"
-              showToolbar={false}
-              style={{ border: 'none' }}
-            >
-              <ClassicTemplatePDF data={debouncedData} />
-            </PDFViewer>
+            /* Desktop: Native iframe consuming the usePDF blob URL */
+            <iframe
+              key={instance.url}
+              src={instance.url}
+              title="Resume PDF Preview"
+              style={{ width: '100%', height: '100%', border: 'none' }}
+            />
           )}
         </div>
       </main>
