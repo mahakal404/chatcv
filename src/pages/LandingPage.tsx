@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { User as FirebaseUser } from 'firebase/auth';
 import { motion, AnimatePresence } from 'motion/react';
 import { FileText, Sparkles, Layout, Download, Zap, Wand2, ChevronDown, CheckCircle2, ArrowRight, ShieldCheck, Globe, HelpCircle, User } from 'lucide-react';
@@ -6,6 +6,7 @@ import { useState } from 'react';
 
 export default function LandingPage({ user }: { user: FirebaseUser | null }) {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const navigate = useNavigate();
 
   const faqs = [
     {
@@ -29,30 +30,32 @@ export default function LandingPage({ user }: { user: FirebaseUser | null }) {
   return (
     <div className="min-h-screen bg-magic-gradient font-sans">
       {/* Navbar */}
-      <nav className="flex items-center justify-between px-8 py-6 sticky top-0 z-50">
-        <Link to="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
-          <div className="logo-icon-gradient p-2.5 rounded-full shadow-lg shadow-brand-indigo/20 relative group">
-            <Sparkles className="text-white w-7 h-7" />
-            <div className="absolute bottom-2 left-2 w-1.5 h-1.5 bg-white rounded-full opacity-80 group-hover:scale-125 transition-transform" />
-          </div>
-          <span className="text-3xl font-black tracking-tighter">
-            <span className="text-brand-indigo">Chat</span><span className="text-brand-pink">CV</span>
-          </span>
-        </Link>
-        <div className="flex items-center gap-6">
-          {!user && (
-            <Link to="/login" className="text-slate-600 font-semibold hover:text-brand-purple transition-all">
-              Sign In
-            </Link>
-          )}
-          <Link 
-            to={user ? "/dashboard" : "/login"} 
-            className="bg-brand-dark text-white px-6 py-2.5 rounded-full font-bold hover:bg-slate-800 transition-all shadow-lg shadow-slate-900/10"
-          >
-            {user ? 'Dashboard' : 'Get Started'}
+      <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-gray-100 transition-all duration-300">
+        <div className="container mx-auto px-4 py-3 md:py-4 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0">
+          <Link to="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
+            <div className="logo-icon-gradient p-2.5 rounded-full shadow-lg shadow-brand-indigo/20 relative group">
+              <Sparkles className="text-white w-7 h-7" />
+              <div className="absolute bottom-2 left-2 w-1.5 h-1.5 bg-white rounded-full opacity-80 group-hover:scale-125 transition-transform" />
+            </div>
+            <span className="text-3xl font-black tracking-tighter">
+              <span className="text-brand-indigo">Chat</span><span className="text-brand-pink">CV</span>
+            </span>
           </Link>
+          <div className="flex items-center justify-center gap-3 w-full md:w-auto">
+            {!user && (
+              <Link to="/login" className="text-slate-600 font-semibold hover:text-brand-purple transition-all whitespace-nowrap">
+                Sign In
+              </Link>
+            )}
+            <Link 
+              to={user ? "/dashboard" : "/login"} 
+              className="bg-brand-dark text-white px-6 py-2.5 rounded-full font-bold hover:bg-slate-800 transition-all shadow-lg shadow-slate-900/10 whitespace-nowrap"
+            >
+              {user ? 'Dashboard' : 'Get Started'}
+            </Link>
+          </div>
         </div>
-      </nav>
+      </header>
 
       {/* Hero Section */}
       <section className="px-8 py-20 lg:py-32 flex flex-col items-center text-center max-w-5xl mx-auto">
@@ -273,6 +276,29 @@ export default function LandingPage({ user }: { user: FirebaseUser | null }) {
               </AnimatePresence>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* Bottom CTA Section */}
+      <section className="w-full py-20 px-4 mt-12 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-3xl shadow-2xl relative overflow-hidden mb-12 max-w-6xl mx-auto">
+        {/* Abstract Background Elements */}
+        <div className="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-white opacity-10 rounded-full blur-2xl"></div>
+        <div className="absolute bottom-0 left-0 -mb-10 -ml-10 w-40 h-40 bg-white opacity-10 rounded-full blur-2xl"></div>
+        
+        <div className="relative z-10 flex flex-col items-center text-center">
+          <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-6">
+            Ready to land your dream job?
+          </h2>
+          <p className="text-blue-100 text-lg md:text-xl mb-10 max-w-2xl">
+            Join thousands of professionals who have successfully built their ATS-friendly resumes with ChatCV. It's free, fast, and secure.
+          </p>
+          <button 
+            onClick={() => navigate(user ? '/dashboard' : '/login')}
+            className="px-10 py-5 bg-white text-blue-700 font-bold rounded-full text-lg hover:bg-gray-50 hover:scale-105 transition-all duration-300 shadow-xl flex items-center gap-2"
+          >
+            <span className="whitespace-nowrap">Get Started for Free</span>
+            <span>🚀</span>
+          </button>
         </div>
       </section>
 
