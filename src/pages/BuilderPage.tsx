@@ -11,7 +11,7 @@ import ResumeForm from '../components/ResumeForm';
 import AIChatbot from '../components/AIChatbot';
 import { GoogleGenAI, ThinkingLevel } from '@google/genai';
 
-import { PDFDownloadLink, usePDF } from '@react-pdf/renderer';
+import { PDFDownloadLink, BlobProvider } from '@react-pdf/renderer';
 import ClassicTemplatePDF from '../components/templates/ClassicTemplatePDF';
 import * as pdfjsLib from 'pdfjs-dist';
 
@@ -242,15 +242,6 @@ export default function BuilderPage({ user }: { user: User }) {
     return () => clearTimeout(timer);
   }, [data, draftKey]);
 
-  // ─── Fix 3: usePDF Hook (Background Blob Generation) ──────────
-  const [instance, updateInstance] = usePDF({
-    document: <ClassicTemplatePDF data={debouncedData} />
-  });
-
-  // Force-update the PDF instance whenever debounced data changes
-  useEffect(() => {
-    updateInstance(<ClassicTemplatePDF data={debouncedData} />);
-  }, [debouncedData, updateInstance]);
 
 
   // ─── Load from Firestore, then check for newer local draft ───
@@ -526,49 +517,54 @@ export default function BuilderPage({ user }: { user: User }) {
             Architecture: usePDF blob → native <iframe>
             ═══════════════════════════════════════════════════════════ */}
         <div className={`flex-1 overflow-hidden ${viewMode === 'edit' ? 'hidden sm:block' : 'block'}`}>
-          {isMobile ? (
-            /* Mobile: Canvas-rendered pages for touch-friendly zoom */
-            <MobilePDFPreview
-              blobUrl={instance.url}
-              loading={instance.loading}
-            />
-          ) : (
-            /* Desktop: Bulletproof Iframe Viewer */
-            <div className="w-full h-full relative bg-slate-100 flex items-center justify-center overflow-hidden">
+          <BlobProvider document={<ClassicTemplatePDF data={debouncedData} />}>
+            {({ blob, url, loading, error }) => {
+              if (error) {
+                console.error("PDF Rendering Error:", error);
+                return (
+                  <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center bg-slate-50">
+                    <AlertTriangle className="w-10 h-10 text-red-500 mb-3" />
+                    <p className="font-bold text-lg text-red-500 mb-2">Error generating preview</p>
+                    <p className="text-sm text-slate-600">{error.message || "Silent crash in TemplatePDF. Check for null/undefined text values."}</p>
+                  </div>
+                );
+              }
 
-              {/* Loading State Overlay */}
-              {instance.loading && (
-                <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-slate-50/90 backdrop-blur-sm">
-                  <RefreshCw className="w-8 h-8 animate-spin text-indigo-600 mb-4" />
-                  <p className="text-sm font-bold text-slate-700">Updating Live Preview...</p>
-                  <p className="text-xs text-slate-400 mt-1">Generating your resume...</p>
-                </div>
-              )}
+              if (isMobile) {
+                return (
+                  <MobilePDFPreview
+                    blobUrl={url}
+                    loading={loading}
+                  />
+                );
+              }
 
-              {/* The Bulletproof Iframe */}
-              {instance.url ? (
-                <iframe
-                  src={`${instance.url}#toolbar=0`}
-                  className="w-full h-full border-none shadow-2xl"
-                  title="Resume Live Preview"
-                  key={instance.url}
-                />
-              ) : (
-                <div className="flex flex-col items-center justify-center gap-3 text-slate-500">
-                  <p className="font-bold text-sm">Initializing PDF Engine...</p>
-                </div>
-              )}
+              return (
+                <div className="w-full h-full relative bg-slate-100 flex items-center justify-center overflow-hidden">
+                  {loading && (
+                    <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-slate-50/90 backdrop-blur-sm">
+                      <RefreshCw className="w-8 h-8 animate-spin text-indigo-600 mb-4" />
+                      <p className="text-sm font-bold text-slate-700">Updating Live Preview...</p>
+                      <p className="text-xs text-slate-400 mt-1">Generating your resume...</p>
+                    </div>
+                  )}
 
-              {/* Error State */}
-              {instance.error && (
-                <div className="flex flex-col items-center justify-center gap-3 text-red-500 absolute inset-0 bg-white z-20">
-                  <AlertTriangle className="w-10 h-10" />
-                  <p className="font-bold text-sm">Failed to load PDF preview.</p>
-                  <p className="text-xs text-slate-400">Try editing your resume to trigger a re-render.</p>
+                  {url ? (
+                    <iframe
+                      src={`${url}#toolbar=0`}
+                      className="w-full h-full border-none shadow-2xl"
+                      title="Resume Live Preview"
+                      key={url}
+                    />
+                  ) : (
+                    <div className="flex flex-col items-center justify-center gap-3 text-slate-500">
+                      <p className="font-bold text-sm">Initializing PDF Engine...</p>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-          )}
+              );
+            }}
+          </BlobProvider>
         </div>
       </main>
       <AIChatbot />

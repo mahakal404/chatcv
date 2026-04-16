@@ -163,7 +163,7 @@ const proficiencyDisplay = ({ level, type, style: displayStyle, accentColor, isS
   const textColor = isSidebar ? '#ffffff' : '#334155';
 
   if (displayStyle === 'text') {
-    return <Text style={{ fontSize: 7, fontWeight: 700, textTransform: 'uppercase', color: isSidebar ? 'rgba(255,255,255,0.6)' : color }}>{level}</Text>;
+    return <Text style={{ fontSize: 7, fontWeight: 700, textTransform: 'uppercase', color: isSidebar ? 'rgba(255,255,255,0.6)' : color }}>{level || ' '}</Text>;
   }
   if (displayStyle === 'circle') {
     // FIX: Using absolute overlay perfectly scaled with 0 anchor
@@ -195,7 +195,7 @@ const proficiencyDisplay = ({ level, type, style: displayStyle, accentColor, isS
       </View>
     );
   }
-  return <Text style={{ fontSize: 7, color: textColor }}>{level}</Text>;
+  return <Text style={{ fontSize: 7, color: textColor }}>{level || ' '}</Text>;
 };
 
 const getDegreeText = (edu: any) =>
@@ -207,7 +207,7 @@ const getInstitutionText = (edu: any) =>
 const SectionHeader = ({ icon, title, color }: { icon: React.ReactNode, title: string, color: string }) => (
   <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8, borderBottomWidth: 1, borderBottomColor: `${color}40`, paddingBottom: 4 }}>
     <View style={{ marginRight: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>{icon}</View>
-    <Text style={{ fontSize: 9, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 2, color: color }}>{title}</Text>
+    <Text style={{ fontSize: 9, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 2, color: color }}>{title || ' '}</Text>
   </View>
 );
 
@@ -243,20 +243,20 @@ const ClassicTheme = ({ data }: Props) => {
             <Image src={profileImage} style={{ width: 80, height: 80, borderRadius: 40, objectFit: 'cover', border: `3px solid ${ac}` }} />
           </View>
         )}
-        <Text style={s.name}>{personalInfo.fullName}</Text>
+        <Text style={s.name}>{personalInfo.fullName || ' '}</Text>
         <View style={s.contactRow}>
-          {personalInfo.email && <View style={s.contactItemSpacing}><View style={{ marginRight: 4 }}>{mailIcon({ size: 9, color: ac })}</View><Text style={{ fontSize: 8, color: '#64748b' }}>{personalInfo.email}</Text></View>}
-          {personalInfo.phone && <View style={s.contactItemSpacing}><View style={{ marginRight: 4 }}>{phoneIcon({ size: 9, color: ac })}</View><Text style={{ fontSize: 8, color: '#64748b' }}>{personalInfo.phone}</Text></View>}
-          {personalInfo.address && <View style={s.contactItemSpacing}><View style={{ marginRight: 4 }}>{mapPinIcon({ size: 9, color: ac })}</View><Text style={{ fontSize: 8, color: '#64748b' }}>{personalInfo.address}</Text></View>}
-          {personalInfo.linkedin && <View style={s.contactItemSpacing}><View style={{ marginRight: 4 }}>{linkedInIcon({ size: 9, color: ac })}</View><Text style={{ fontSize: 8, color: '#64748b' }}>{personalInfo.linkedin}</Text></View>}
-          {personalInfo.portfolio && <View style={s.contactItemSpacing}><View style={{ marginRight: 4 }}>{globeIcon({ size: 9, color: ac })}</View><Text style={{ fontSize: 8, color: '#64748b' }}>{personalInfo.portfolio}</Text></View>}
+          {personalInfo.email && <View style={s.contactItemSpacing}><View style={{ marginRight: 4 }}>{mailIcon({ size: 9, color: ac })}</View><Text style={{ fontSize: 8, color: '#64748b' }}>{personalInfo.email || ' '}</Text></View>}
+          {personalInfo.phone && <View style={s.contactItemSpacing}><View style={{ marginRight: 4 }}>{phoneIcon({ size: 9, color: ac })}</View><Text style={{ fontSize: 8, color: '#64748b' }}>{personalInfo.phone || ' '}</Text></View>}
+          {personalInfo.address && <View style={s.contactItemSpacing}><View style={{ marginRight: 4 }}>{mapPinIcon({ size: 9, color: ac })}</View><Text style={{ fontSize: 8, color: '#64748b' }}>{personalInfo.address || ' '}</Text></View>}
+          {personalInfo.linkedin && <View style={s.contactItemSpacing}><View style={{ marginRight: 4 }}>{linkedInIcon({ size: 9, color: ac })}</View><Text style={{ fontSize: 8, color: '#64748b' }}>{personalInfo.linkedin || ' '}</Text></View>}
+          {personalInfo.portfolio && <View style={s.contactItemSpacing}><View style={{ marginRight: 4 }}>{globeIcon({ size: 9, color: ac })}</View><Text style={{ fontSize: 8, color: '#64748b' }}>{personalInfo.portfolio || ' '}</Text></View>}
         </View>
       </View>
 
       {summary && summary.trim() !== '' && (
         <View style={{ marginBottom: 4 }}>
           <Text style={s.sectionTitle}>Summary</Text>
-          <Text style={s.desc}>{summary}</Text>
+          <Text style={s.desc}>{summary || ' '}</Text>
         </View>
       )}
 
@@ -266,11 +266,11 @@ const ClassicTheme = ({ data }: Props) => {
           {experience.map(exp => (
             <View key={exp.id} style={s.itemWrap}>
               <View style={s.itemHeader}>
-                <Text style={s.itemTitle}>{exp.role}</Text>
+                <Text style={s.itemTitle}>{exp.role || ' '}</Text>
                 <Text style={s.date}>{exp.startDate}{exp.startDate && exp.endDate ? ' - ' : ''}{exp.endDate || 'Present'}</Text>
               </View>
-              {exp.company && <Text style={s.itemSub}>{exp.company}</Text>}
-              {exp.description && <Text style={s.desc}>{exp.description}</Text>}
+              {exp.company && <Text style={s.itemSub}>{exp.company || ' '}</Text>}
+              {exp.description && <Text style={s.desc}>{exp.description || ' '}</Text>}
             </View>
           ))}
         </View>
@@ -286,12 +286,12 @@ const ClassicTheme = ({ data }: Props) => {
             return (
               <View key={edu.id} style={s.itemWrap}>
                 <View style={s.itemHeader}>
-                  <Text style={s.itemTitle}>{degree}</Text>
+                  <Text style={s.itemTitle}>{degree || ' '}</Text>
                   <Text style={s.date}>{edu.startDate}{edu.startDate && edu.endDate ? ' - ' : ''}{edu.endDate}</Text>
                 </View>
                 <View style={s.itemHeader}>
-                  <Text style={s.itemSub}>{institution}</Text>
-                  {edu.score ? <Text style={{ fontSize: 8, fontWeight: 700, color: '#334155' }}>{edu.score}</Text> : null}
+                  <Text style={s.itemSub}>{institution || ' '}</Text>
+                  {edu.score ? <Text style={{ fontSize: 8, fontWeight: 700, color: '#334155' }}>{edu.score || ' '}</Text> : null}
                 </View>
                 {(edu.level === '10th' || edu.level === '12th') && edu.stream && (
                   <Text style={{ fontSize: 7, color: '#94a3b8', marginTop: 2 }}>Stream: {edu.stream}</Text>
@@ -308,7 +308,7 @@ const ClassicTheme = ({ data }: Props) => {
           <View style={s.grid2}>
             {skills.map(skill => (
               <View key={skill.id} style={s.gridItem} wrap={false}>
-                <Text style={{ fontWeight: 600, fontSize: 9, color: '#334155' }}>{skill.name}</Text>
+                <Text style={{ fontWeight: 600, fontSize: 9, color: '#334155' }}>{skill.name || ' '}</Text>
                 {proficiencyDisplay({ level: skill.level, type: 'skill', style: skillDisplayStyle, accentColor: ac })}
               </View>
             ))}
@@ -322,10 +322,10 @@ const ClassicTheme = ({ data }: Props) => {
           {projects.map(p => (
             <View key={p.id} style={s.itemWrap}>
               <View style={s.itemHeader}>
-                <Text style={s.itemTitle}>{p.title}</Text>
+                <Text style={s.itemTitle}>{p.title || ' '}</Text>
                 {p.link && <Link src={p.link}><Text style={{ fontSize: 7, color: ac }}>View Project</Text></Link>}
               </View>
-              {p.description && <Text style={s.desc}>{p.description}</Text>}
+              {p.description && <Text style={s.desc}>{p.description || ' '}</Text>}
             </View>
           ))}
         </View>
@@ -337,10 +337,10 @@ const ClassicTheme = ({ data }: Props) => {
           {certifications.map(cert => (
             <View key={cert.id} style={{ marginBottom: 8 }} wrap={false}>
               <View style={s.itemHeader}>
-                <Text style={{ fontWeight: 700, fontSize: 10, color: '#0f172a' }}>{cert.name}</Text>
-                <Text style={s.date}>{cert.year}</Text>
+                <Text style={{ fontWeight: 700, fontSize: 10, color: '#0f172a' }}>{cert.name || ' '}</Text>
+                <Text style={s.date}>{cert.year || ' '}</Text>
               </View>
-              {cert.organization && <Text style={s.itemSub}>{cert.organization}</Text>}
+              {cert.organization && <Text style={s.itemSub}>{cert.organization || ' '}</Text>}
             </View>
           ))}
         </View>
@@ -352,7 +352,7 @@ const ClassicTheme = ({ data }: Props) => {
           <View style={s.grid2}>
             {languages.map(lang => (
               <View key={lang.id} style={s.gridItem} wrap={false}>
-                <Text style={{ fontWeight: 600, fontSize: 9, color: '#334155' }}>{lang.name}</Text>
+                <Text style={{ fontWeight: 600, fontSize: 9, color: '#334155' }}>{lang.name || ' '}</Text>
                 {proficiencyDisplay({ level: lang.proficiency, type: 'language', style: languageDisplayStyle, accentColor: ac })}
               </View>
             ))}
@@ -362,8 +362,8 @@ const ClassicTheme = ({ data }: Props) => {
 
       {customSections && customSections.length > 0 && customSections.map(section => (
         <View key={section.id}>
-          <Text style={s.sectionTitle}>{section.title}</Text>
-          <Text style={s.desc}>{section.content}</Text>
+          <Text style={s.sectionTitle}>{section.title || ' '}</Text>
+          <Text style={s.desc}>{section.content || ' '}</Text>
         </View>
       ))}
     </Page>
@@ -385,22 +385,22 @@ const ModernTheme = ({ data }: Props) => {
             <Image src={profileImage} style={{ width: 64, height: 64, borderRadius: 32, objectFit: 'cover', border: `3px solid ${ac}`, marginRight: 14 }} />
           )}
           <View style={{ flex: 1 }}>
-            <Text style={{ fontSize: 26, fontWeight: 900, color: '#0f172a', lineHeight: 1.1, marginBottom: 6 }}>{personalInfo.fullName}</Text>
+            <Text style={{ fontSize: 26, fontWeight: 900, color: '#0f172a', lineHeight: 1.1, marginBottom: 6 }}>{personalInfo.fullName || ' '}</Text>
             <View style={{ width: 60, height: 5, borderRadius: 3, backgroundColor: ac }} />
           </View>
         </View>
         <View style={{ textAlign: 'right', fontSize: 8, color: '#64748b', fontWeight: 500 }}>
-          {personalInfo.email && <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', marginBottom: 4 }}><Text style={{ marginRight: 6 }}>{personalInfo.email}</Text><View>{mailIcon({ size: 9, color: ac })}</View></View>}
-          {personalInfo.phone && <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', marginBottom: 4 }}><Text style={{ marginRight: 6 }}>{personalInfo.phone}</Text><View>{phoneIcon({ size: 9, color: ac })}</View></View>}
-          {personalInfo.address && <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', marginBottom: 4 }}><Text style={{ marginRight: 6 }}>{personalInfo.address}</Text><View>{mapPinIcon({ size: 9, color: ac })}</View></View>}
-          {personalInfo.linkedin && <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', marginBottom: 4 }}><Text style={{ marginRight: 6 }}>{personalInfo.linkedin}</Text><View>{linkedInIcon({ size: 9, color: ac })}</View></View>}
+          {personalInfo.email && <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', marginBottom: 4 }}><Text style={{ marginRight: 6 }}>{personalInfo.email || ' '}</Text><View>{mailIcon({ size: 9, color: ac })}</View></View>}
+          {personalInfo.phone && <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', marginBottom: 4 }}><Text style={{ marginRight: 6 }}>{personalInfo.phone || ' '}</Text><View>{phoneIcon({ size: 9, color: ac })}</View></View>}
+          {personalInfo.address && <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', marginBottom: 4 }}><Text style={{ marginRight: 6 }}>{personalInfo.address || ' '}</Text><View>{mapPinIcon({ size: 9, color: ac })}</View></View>}
+          {personalInfo.linkedin && <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', marginBottom: 4 }}><Text style={{ marginRight: 6 }}>{personalInfo.linkedin || ' '}</Text><View>{linkedInIcon({ size: 9, color: ac })}</View></View>}
         </View>
       </View>
 
       {summary && summary.trim() !== '' && (
         <View style={{ paddingHorizontal: 32, marginBottom: 18 }}>
           <SectionHeader icon={userIcon({ size: 10, color: ac })} title="Professional Summary" color={ac} />
-          <Text style={{ fontSize: 9, color: '#475569' }}>{summary}</Text>
+          <Text style={{ fontSize: 9, color: '#475569' }}>{summary || ' '}</Text>
         </View>
       )}
 
@@ -412,11 +412,11 @@ const ModernTheme = ({ data }: Props) => {
               {experience.map(exp => (
                 <View key={exp.id} style={{ marginBottom: 12 }}>
                   <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' }}>
-                    <Text style={{ fontSize: 11, fontWeight: 700, color: '#0f172a' }}>{exp.role}</Text>
+                    <Text style={{ fontSize: 11, fontWeight: 700, color: '#0f172a' }}>{exp.role || ' '}</Text>
                     <Text style={{ fontSize: 7, fontWeight: 900, color: '#94a3b8', textTransform: 'uppercase' }}>{exp.startDate}{exp.endDate ? ` — ${exp.endDate}` : ''}</Text>
                   </View>
-                  {exp.company && <Text style={{ fontSize: 9, fontWeight: 700, color: ac, marginBottom: 4 }}>{exp.company}</Text>}
-                  {exp.description && <Text style={{ fontSize: 9, color: '#475569' }}>{exp.description}</Text>}
+                  {exp.company && <Text style={{ fontSize: 9, fontWeight: 700, color: ac, marginBottom: 4 }}>{exp.company || ' '}</Text>}
+                  {exp.description && <Text style={{ fontSize: 9, color: '#475569' }}>{exp.description || ' '}</Text>}
                 </View>
               ))}
             </View>
@@ -431,11 +431,11 @@ const ModernTheme = ({ data }: Props) => {
                 if (!degree && !institution) return null;
                 return (
                   <View key={edu.id} style={{ marginBottom: 10 }} wrap={false}>
-                    <Text style={{ fontWeight: 700, fontSize: 10, color: '#0f172a' }}>{degree}</Text>
-                    {institution ? <Text style={{ fontSize: 8, color: '#64748b', marginBottom: 2 }}>{institution}</Text> : null}
+                    <Text style={{ fontWeight: 700, fontSize: 10, color: '#0f172a' }}>{degree || ' '}</Text>
+                    {institution ? <Text style={{ fontSize: 8, color: '#64748b', marginBottom: 2 }}>{institution || ' '}</Text> : null}
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                       <Text style={{ fontSize: 7, fontWeight: 700, color: '#94a3b8' }}>{edu.startDate}{edu.endDate ? ` - ${edu.endDate}` : ''}</Text>
-                      {edu.score ? <Text style={{ fontSize: 7, fontWeight: 900, color: ac }}>{edu.score}</Text> : null}
+                      {edu.score ? <Text style={{ fontSize: 7, fontWeight: 900, color: ac }}>{edu.score || ' '}</Text> : null}
                     </View>
                   </View>
                 );
@@ -449,7 +449,7 @@ const ModernTheme = ({ data }: Props) => {
               <View style={{ flexDirection: 'column' }}>
                 {languages.map(lang => (
                   <View key={lang.id} style={{ marginBottom: 6, padding: 6, backgroundColor: '#f8fafc', borderRadius: 4, borderWidth: 1, borderColor: '#f1f5f9' }} wrap={false}>
-                    <Text style={{ fontWeight: 600, fontSize: 9, color: '#0f172a', marginBottom: 3 }}>{lang.name}</Text>
+                    <Text style={{ fontWeight: 600, fontSize: 9, color: '#0f172a', marginBottom: 3 }}>{lang.name || ' '}</Text>
                     <View style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
                       {proficiencyDisplay({ level: lang.proficiency, type: 'language', style: languageDisplayStyle, accentColor: ac })}
                     </View>
@@ -465,10 +465,10 @@ const ModernTheme = ({ data }: Props) => {
               {projects.map(p => (
                 <View key={p.id} style={{ marginBottom: 12 }} wrap={false}>
                   <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' }}>
-                    <Text style={{ fontSize: 11, fontWeight: 700, color: '#0f172a' }}>{p.title}</Text>
+                    <Text style={{ fontSize: 11, fontWeight: 700, color: '#0f172a' }}>{p.title || ' '}</Text>
                     {p.link && <Link src={p.link}><Text style={{ fontSize: 7, fontWeight: 900, color: ac }}>Link</Text></Link>}
                   </View>
-                  {p.description && <Text style={{ fontSize: 9, color: '#475569' }}>{p.description}</Text>}
+                  {p.description && <Text style={{ fontSize: 9, color: '#475569' }}>{p.description || ' '}</Text>}
                 </View>
               ))}
             </View>
@@ -477,7 +477,7 @@ const ModernTheme = ({ data }: Props) => {
           {customSections && customSections.length > 0 && customSections.map(section => (
             <View key={section.id} style={{ marginBottom: 18 }}>
               <SectionHeader icon={awardIcon({ size: 10, color: ac })} title={section.title} color={ac} />
-              <Text style={{ fontSize: 9, color: '#475569' }}>{section.content}</Text>
+              <Text style={{ fontSize: 9, color: '#475569' }}>{section.content || ' '}</Text>
             </View>
           ))}
         </View>
@@ -488,7 +488,7 @@ const ModernTheme = ({ data }: Props) => {
               <SectionHeader icon={cpuIcon({ size: 10, color: ac })} title="Skills" color={ac} />
               {skills.map(skill => (
                 <View key={skill.id} style={{ marginBottom: 6, padding: 6, backgroundColor: '#f8fafc', borderRadius: 4, borderWidth: 1, borderColor: '#f1f5f9' }} wrap={false}>
-                  <Text style={{ fontWeight: 600, fontSize: 9, color: '#0f172a', marginBottom: 3 }}>{skill.name}</Text>
+                  <Text style={{ fontWeight: 600, fontSize: 9, color: '#0f172a', marginBottom: 3 }}>{skill.name || ' '}</Text>
                   <View style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
                     {proficiencyDisplay({ level: skill.level, type: 'skill', style: skillDisplayStyle, accentColor: ac })}
                   </View>
@@ -502,10 +502,10 @@ const ModernTheme = ({ data }: Props) => {
               <SectionHeader icon={awardIcon({ size: 10, color: ac })} title="Certifications" color={ac} />
               {certifications.map(cert => (
                 <View key={cert.id} style={{ marginBottom: 8 }} wrap={false}>
-                  <Text style={{ fontWeight: 700, fontSize: 9, color: '#0f172a' }}>{cert.name}</Text>
+                  <Text style={{ fontWeight: 700, fontSize: 9, color: '#0f172a' }}>{cert.name || ' '}</Text>
                   <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                    {cert.organization ? <Text style={{ fontSize: 7, color: '#64748b' }}>{cert.organization}</Text> : null}
-                    {cert.year ? <Text style={{ fontSize: 7, fontWeight: 700, color: '#94a3b8' }}>{cert.year}</Text> : null}
+                    {cert.organization ? <Text style={{ fontSize: 7, color: '#64748b' }}>{cert.organization || ' '}</Text> : null}
+                    {cert.year ? <Text style={{ fontSize: 7, fontWeight: 700, color: '#94a3b8' }}>{cert.year || ' '}</Text> : null}
                   </View>
                 </View>
               ))}
@@ -534,7 +534,7 @@ const CreativeTheme = ({ data }: Props) => {
             <Image src={profileImage} style={{ width: 90, height: 90, borderRadius: 45, objectFit: 'cover', border: '3px solid rgba(255,255,255,0.3)' }} />
           </View>
         )}
-        <Text style={{ fontSize: 20, fontWeight: 900, color: '#ffffff', lineHeight: 1.15, marginBottom: 4 }}>{personalInfo.fullName}</Text>
+        <Text style={{ fontSize: 20, fontWeight: 900, color: '#ffffff', lineHeight: 1.15, marginBottom: 4 }}>{personalInfo.fullName || ' '}</Text>
         <Text style={{ fontSize: 7, color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase', letterSpacing: 3, marginBottom: 20 }}>Professional Resume</Text>
 
         <View style={{ marginBottom: 20 }}>
@@ -542,10 +542,10 @@ const CreativeTheme = ({ data }: Props) => {
             <View style={{ marginRight: 6 }}>{mapPinIcon({ size: 9, color: '#ffffff' })}</View>
             <Text style={{ fontSize: 7, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 2, color: 'rgba(255,255,255,0.8)' }}>Contact</Text>
           </View>
-          {personalInfo.email && <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}><View style={{ marginRight: 6 }}>{mailIcon({ size: 9, color: '#ffffff' })}</View><Text style={{ fontSize: 8, color: '#ffffff' }}>{personalInfo.email}</Text></View>}
-          {personalInfo.phone && <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}><View style={{ marginRight: 6 }}>{phoneIcon({ size: 9, color: '#ffffff' })}</View><Text style={{ fontSize: 8, color: '#ffffff' }}>{personalInfo.phone}</Text></View>}
-          {personalInfo.address && <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}><View style={{ marginRight: 6 }}>{mapPinIcon({ size: 9, color: '#ffffff' })}</View><Text style={{ fontSize: 8, color: '#ffffff' }}>{personalInfo.address}</Text></View>}
-          {personalInfo.linkedin && <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}><View style={{ marginRight: 6 }}>{linkedInIcon({ size: 9, color: '#ffffff' })}</View><Text style={{ fontSize: 8, color: '#ffffff' }}>{personalInfo.linkedin}</Text></View>}
+          {personalInfo.email && <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}><View style={{ marginRight: 6 }}>{mailIcon({ size: 9, color: '#ffffff' })}</View><Text style={{ fontSize: 8, color: '#ffffff' }}>{personalInfo.email || ' '}</Text></View>}
+          {personalInfo.phone && <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}><View style={{ marginRight: 6 }}>{phoneIcon({ size: 9, color: '#ffffff' })}</View><Text style={{ fontSize: 8, color: '#ffffff' }}>{personalInfo.phone || ' '}</Text></View>}
+          {personalInfo.address && <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}><View style={{ marginRight: 6 }}>{mapPinIcon({ size: 9, color: '#ffffff' })}</View><Text style={{ fontSize: 8, color: '#ffffff' }}>{personalInfo.address || ' '}</Text></View>}
+          {personalInfo.linkedin && <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}><View style={{ marginRight: 6 }}>{linkedInIcon({ size: 9, color: '#ffffff' })}</View><Text style={{ fontSize: 8, color: '#ffffff' }}>{personalInfo.linkedin || ' '}</Text></View>}
         </View>
 
         {languages && languages.length > 0 && (
@@ -556,7 +556,7 @@ const CreativeTheme = ({ data }: Props) => {
             </View>
             {languages.map(lang => (
               <View key={lang.id} style={{ marginBottom: 6, padding: 4, backgroundColor: 'rgba(0,0,0,0.1)', borderRadius: 4 }} wrap={false}>
-                <Text style={{ fontSize: 9, fontWeight: 600, color: '#ffffff', marginBottom: 2 }}>{lang.name}</Text>
+                <Text style={{ fontSize: 9, fontWeight: 600, color: '#ffffff', marginBottom: 2 }}>{lang.name || ' '}</Text>
                 <View style={{ flexDirection: 'row' }}>
                   {proficiencyDisplay({ level: lang.proficiency, type: 'language', style: languageDisplayStyle, accentColor: ac, isSidebar: true })}
                 </View>
@@ -570,7 +570,7 @@ const CreativeTheme = ({ data }: Props) => {
         {summary && summary.trim() !== '' && (
           <View style={{ marginBottom: 18 }}>
             <SectionHeader icon={userIcon({ size: 10, color: ac })} title="Profile" color={ac} />
-            <Text style={{ fontSize: 9, color: '#475569' }}>{summary}</Text>
+            <Text style={{ fontSize: 9, color: '#475569' }}>{summary || ' '}</Text>
           </View>
         )}
 
@@ -580,11 +580,11 @@ const CreativeTheme = ({ data }: Props) => {
             {experience.map(exp => (
               <View key={exp.id} style={{ marginBottom: 12, paddingLeft: 10, borderLeftWidth: 2, borderLeftColor: ac }}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' }}>
-                  <Text style={{ fontWeight: 700, color: '#0f172a', fontSize: 11 }}>{exp.role}</Text>
+                  <Text style={{ fontWeight: 700, color: '#0f172a', fontSize: 11 }}>{exp.role || ' '}</Text>
                   <Text style={{ fontSize: 7, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase' }}>{exp.startDate}{exp.endDate ? ` - ${exp.endDate}` : ''}</Text>
                 </View>
-                {exp.company && <Text style={{ fontSize: 9, fontWeight: 700, color: '#64748b', marginBottom: 3 }}>{exp.company}</Text>}
-                {exp.description && <Text style={{ fontSize: 9, color: '#475569' }}>{exp.description}</Text>}
+                {exp.company && <Text style={{ fontSize: 9, fontWeight: 700, color: '#64748b', marginBottom: 3 }}>{exp.company || ' '}</Text>}
+                {exp.description && <Text style={{ fontSize: 9, color: '#475569' }}>{exp.description || ' '}</Text>}
               </View>
             ))}
           </View>
@@ -600,11 +600,11 @@ const CreativeTheme = ({ data }: Props) => {
               return (
                 <View key={edu.id} style={{ marginBottom: 10 }} wrap={false}>
                   <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' }}>
-                    <Text style={{ fontWeight: 700, color: '#0f172a', fontSize: 10 }}>{degree}</Text>
+                    <Text style={{ fontWeight: 700, color: '#0f172a', fontSize: 10 }}>{degree || ' '}</Text>
                     <Text style={{ fontSize: 7, fontWeight: 700, color: '#94a3b8' }}>{edu.startDate}{edu.endDate ? ` - ${edu.endDate}` : ''}</Text>
                   </View>
-                  {institution ? <Text style={{ fontSize: 8, color: '#64748b', marginTop: 2 }}>{institution}</Text> : null}
-                  {edu.score && <Text style={{ fontSize: 8, fontWeight: 700, color: ac, marginTop: 2 }}>{edu.score}</Text>}
+                  {institution ? <Text style={{ fontSize: 8, color: '#64748b', marginTop: 2 }}>{institution || ' '}</Text> : null}
+                  {edu.score && <Text style={{ fontSize: 8, fontWeight: 700, color: ac, marginTop: 2 }}>{edu.score || ' '}</Text>}
                 </View>
               );
             })}
@@ -617,7 +617,7 @@ const CreativeTheme = ({ data }: Props) => {
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
               {skills.map(skill => (
                 <View key={skill.id} style={{ width: '47%', marginBottom: 8 }} wrap={false}>
-                  <Text style={{ fontWeight: 700, fontSize: 9, color: '#334155', marginBottom: 3 }}>{skill.name}</Text>
+                  <Text style={{ fontWeight: 700, fontSize: 9, color: '#334155', marginBottom: 3 }}>{skill.name || ' '}</Text>
                   {proficiencyDisplay({ level: skill.level, type: 'skill', style: skillDisplayStyle, accentColor: ac })}
                 </View>
               ))}
@@ -631,10 +631,10 @@ const CreativeTheme = ({ data }: Props) => {
             {certifications.map(cert => (
               <View key={cert.id} style={{ marginBottom: 8 }} wrap={false}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' }}>
-                  <Text style={{ fontWeight: 700, fontSize: 10, color: '#0f172a' }}>{cert.name}</Text>
-                  {cert.year && <Text style={{ fontSize: 7, fontWeight: 700, color: '#94a3b8' }}>{cert.year}</Text>}
+                  <Text style={{ fontWeight: 700, fontSize: 10, color: '#0f172a' }}>{cert.name || ' '}</Text>
+                  {cert.year && <Text style={{ fontSize: 7, fontWeight: 700, color: '#94a3b8' }}>{cert.year || ' '}</Text>}
                 </View>
-                {cert.organization && <Text style={{ fontSize: 8, color: '#64748b' }}>{cert.organization}</Text>}
+                {cert.organization && <Text style={{ fontSize: 8, color: '#64748b' }}>{cert.organization || ' '}</Text>}
               </View>
             ))}
           </View>
@@ -646,10 +646,10 @@ const CreativeTheme = ({ data }: Props) => {
             {projects.map(p => (
               <View key={p.id} style={{ marginBottom: 12, paddingLeft: 10, borderLeftWidth: 2, borderLeftColor: ac }}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' }}>
-                  <Text style={{ fontWeight: 700, color: '#0f172a', fontSize: 11 }}>{p.title}</Text>
+                  <Text style={{ fontWeight: 700, color: '#0f172a', fontSize: 11 }}>{p.title || ' '}</Text>
                   {p.link && <Link src={p.link}><Text style={{ fontSize: 7, fontWeight: 700, color: ac }}>Link</Text></Link>}
                 </View>
-                {p.description && <Text style={{ fontSize: 9, color: '#475569', marginTop: 2 }}>{p.description}</Text>}
+                {p.description && <Text style={{ fontSize: 9, color: '#475569', marginTop: 2 }}>{p.description || ' '}</Text>}
               </View>
             ))}
           </View>
@@ -679,14 +679,14 @@ const TechTheme = ({ data }: Props) => {
             <View style={{ flex: 1 }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }}>
                 <View style={{ marginRight: 8, display: 'flex', justifyContent: 'center' }}>{terminalIcon({ size: 16, color: ac })}</View>
-                <Text style={{ fontSize: 24, fontWeight: 900, letterSpacing: -0.5, color: '#0f172a', textTransform: 'uppercase' }}>{personalInfo.fullName}</Text>
+                <Text style={{ fontSize: 24, fontWeight: 900, letterSpacing: -0.5, color: '#0f172a', textTransform: 'uppercase' }}>{personalInfo.fullName || ' '}</Text>
               </View>
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 6 }}>
-                {personalInfo.email && <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 6 }}><View style={{ marginRight: 4 }}>{mailIcon({ size: 9, color: '#64748b' })}</View><Text style={{ fontSize: 8, color: '#475569', fontWeight: 500 }}>{personalInfo.email}</Text></View>}
-                {personalInfo.phone && <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 6 }}><View style={{ marginRight: 4 }}>{phoneIcon({ size: 9, color: '#64748b' })}</View><Text style={{ fontSize: 8, color: '#475569', fontWeight: 500 }}>{personalInfo.phone}</Text></View>}
-                {personalInfo.address && <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 6 }}><View style={{ marginRight: 4 }}>{mapPinIcon({ size: 9, color: '#64748b' })}</View><Text style={{ fontSize: 8, color: '#475569', fontWeight: 500 }}>{personalInfo.address}</Text></View>}
-                {personalInfo.linkedin && <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 6 }}><View style={{ marginRight: 4 }}>{linkedInIcon({ size: 9, color: '#64748b' })}</View><Text style={{ fontSize: 8, color: '#475569', fontWeight: 500 }}>{personalInfo.linkedin}</Text></View>}
-                {personalInfo.portfolio && <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 6 }}><View style={{ marginRight: 4 }}>{globeIcon({ size: 9, color: '#64748b' })}</View><Text style={{ fontSize: 8, color: '#475569', fontWeight: 500 }}>{personalInfo.portfolio}</Text></View>}
+                {personalInfo.email && <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 6 }}><View style={{ marginRight: 4 }}>{mailIcon({ size: 9, color: '#64748b' })}</View><Text style={{ fontSize: 8, color: '#475569', fontWeight: 500 }}>{personalInfo.email || ' '}</Text></View>}
+                {personalInfo.phone && <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 6 }}><View style={{ marginRight: 4 }}>{phoneIcon({ size: 9, color: '#64748b' })}</View><Text style={{ fontSize: 8, color: '#475569', fontWeight: 500 }}>{personalInfo.phone || ' '}</Text></View>}
+                {personalInfo.address && <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 6 }}><View style={{ marginRight: 4 }}>{mapPinIcon({ size: 9, color: '#64748b' })}</View><Text style={{ fontSize: 8, color: '#475569', fontWeight: 500 }}>{personalInfo.address || ' '}</Text></View>}
+                {personalInfo.linkedin && <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 6 }}><View style={{ marginRight: 4 }}>{linkedInIcon({ size: 9, color: '#64748b' })}</View><Text style={{ fontSize: 8, color: '#475569', fontWeight: 500 }}>{personalInfo.linkedin || ' '}</Text></View>}
+                {personalInfo.portfolio && <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 6 }}><View style={{ marginRight: 4 }}>{globeIcon({ size: 9, color: '#64748b' })}</View><Text style={{ fontSize: 8, color: '#475569', fontWeight: 500 }}>{personalInfo.portfolio || ' '}</Text></View>}
               </View>
             </View>
           </View>
@@ -703,7 +703,7 @@ const TechTheme = ({ data }: Props) => {
       {summary && summary.trim() !== '' && (
         <View style={{ marginBottom: 18 }} wrap={false}>
           <SectionHeader icon={codeIcon({ size: 11, color: ac })} title="Executive Summary" color={ac} />
-          <Text style={{ fontSize: 9, color: '#475569', fontWeight: 500 }}>{summary}</Text>
+          <Text style={{ fontSize: 9, color: '#475569', fontWeight: 500 }}>{summary || ' '}</Text>
         </View>
       )}
 
@@ -716,12 +716,12 @@ const TechTheme = ({ data }: Props) => {
               {experience.map(exp => (
                 <View key={exp.id} style={{ marginBottom: 14 }}>
                   <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' }}>
-                    <Text style={{ fontSize: 11, fontWeight: 800, color: '#0f172a' }}>{exp.role}</Text>
+                    <Text style={{ fontSize: 11, fontWeight: 800, color: '#0f172a' }}>{exp.role || ' '}</Text>
                     <Text style={{ fontSize: 7, fontWeight: 800, color: '#0f172a', backgroundColor: '#f1f5f9', paddingHorizontal: 6, paddingVertical: 3, borderRadius: 2, textTransform: 'uppercase' }}>{exp.startDate}{exp.endDate ? ` :: ${exp.endDate}` : ''}</Text>
                   </View>
-                  {exp.company && <Text style={{ fontSize: 9, fontWeight: 700, color: ac, textTransform: 'uppercase', letterSpacing: 1, marginTop: 2 }}>{exp.company}</Text>}
+                  {exp.company && <Text style={{ fontSize: 9, fontWeight: 700, color: ac, textTransform: 'uppercase', letterSpacing: 1, marginTop: 2 }}>{exp.company || ' '}</Text>}
                   {exp.description && (
-                    <Text style={{ fontSize: 9, color: '#475569', marginTop: 4, paddingLeft: 10, borderLeftWidth: 2, borderLeftColor: '#e2e8f0' }}>{exp.description}</Text>
+                    <Text style={{ fontSize: 9, color: '#475569', marginTop: 4, paddingLeft: 10, borderLeftWidth: 2, borderLeftColor: '#e2e8f0' }}>{exp.description || ' '}</Text>
                   )}
                 </View>
               ))}
@@ -751,7 +751,7 @@ const TechTheme = ({ data }: Props) => {
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 15, marginTop: 5 }}>
                 {languages.map(lang => (
                   <View key={lang.id} style={{ width: '45%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }} wrap={false}>
-                    <Text style={{ fontSize: 9, fontWeight: 700, color: '#0f172a' }}>{lang.name}</Text>
+                    <Text style={{ fontSize: 9, fontWeight: 700, color: '#0f172a' }}>{lang.name || ' '}</Text>
                     <View>
                       {proficiencyDisplay({ level: lang.proficiency, type: 'language', style: languageDisplayStyle, accentColor: ac })}
                     </View>
@@ -767,10 +767,10 @@ const TechTheme = ({ data }: Props) => {
               {projects.map(p => (
                 <View key={p.id} style={{ marginBottom: 10, padding: 10, backgroundColor: '#f8fafc', borderRadius: 4, borderWidth: 1, borderColor: '#e2e8f0' }}>
                   <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Text style={{ fontWeight: 800, fontSize: 10, color: '#0f172a' }}>{p.title}</Text>
+                    <Text style={{ fontWeight: 800, fontSize: 10, color: '#0f172a' }}>{p.title || ' '}</Text>
                     {p.link && <Link src={p.link}><Text style={{ fontSize: 7, fontWeight: 800, color: ac, textTransform: 'uppercase' }}>[ Source ]</Text></Link>}
                   </View>
-                  {p.description && <Text style={{ fontSize: 9, color: '#475569', marginTop: 4 }}>{p.description}</Text>}
+                  {p.description && <Text style={{ fontSize: 9, color: '#475569', marginTop: 4 }}>{p.description || ' '}</Text>}
                 </View>
               ))}
             </View>
@@ -782,7 +782,7 @@ const TechTheme = ({ data }: Props) => {
               {certifications.map(cert => (
                 <View key={cert.id} style={{ marginBottom: 8 }} wrap={false}>
                   <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' }}>
-                    <Text style={{ fontWeight: 800, fontSize: 9, color: '#0f172a' }}>{cert.name}</Text>
+                    <Text style={{ fontWeight: 800, fontSize: 9, color: '#0f172a' }}>{cert.name || ' '}</Text>
                     <Text style={{ fontSize: 8, color: '#475569' }}>{cert.organization}{cert.year ? ` · ${cert.year}` : ''}</Text>
                   </View>
                 </View>
@@ -798,7 +798,7 @@ const TechTheme = ({ data }: Props) => {
               <View style={{ flexDirection: 'column', gap: 6 }}>
                 {skills.map(skill => (
                   <View key={skill.id} style={{ padding: 6, borderRadius: 4, backgroundColor: '#f8fafc', borderWidth: 1, borderColor: '#e2e8f0' }} wrap={false}>
-                    <Text style={{ fontSize: 9, fontWeight: 700, color: '#0f172a', marginBottom: 4 }}>{skill.name}</Text>
+                    <Text style={{ fontSize: 9, fontWeight: 700, color: '#0f172a', marginBottom: 4 }}>{skill.name || ' '}</Text>
                     {proficiencyDisplay({ level: skill.level, type: 'skill', style: skillDisplayStyle, accentColor: ac })}
                   </View>
                 ))}
