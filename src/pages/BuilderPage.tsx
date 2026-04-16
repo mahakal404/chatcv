@@ -270,6 +270,8 @@ export default function BuilderPage({ user }: { user: User }) {
                 if (localTime > firestoreTime) {
                   const { _savedAt, ...draftData } = parsed;
                   setData(draftData);
+                  // CRITICAL FIX: Instantly provide the saved data to the PDF engine on load
+                  setDebouncedData(draftData);
                   toast.info('Restored your unsaved local draft.', { duration: 4000 });
                   // Mark initial load done so auto-save doesn't re-trigger immediately
                   setTimeout(() => { isInitialLoad.current = false; }, 2000);
@@ -284,6 +286,8 @@ export default function BuilderPage({ user }: { user: User }) {
           }
 
           setData(resumeData.data);
+          // CRITICAL FIX: Instantly provide the loaded data to the PDF engine
+          setDebouncedData(resumeData.data);
         } else {
           navigate('/dashboard');
         }
