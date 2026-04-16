@@ -221,8 +221,8 @@ const ClassicTheme = ({ data }: Props) => {
   const s = StyleSheet.create({
     page: { padding: 40, fontFamily: 'Inter', fontSize: 9, color: '#334155', lineHeight: 1.35 },
     headerWrap: { textAlign: 'center', borderBottomWidth: 2, borderBottomColor: ac, paddingBottom: 16, marginBottom: 18 },
-    name: { fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: 2, color: '#0f172a', marginBottom: 8 },
-    contactRow: { flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap', marginTop: 4 },
+    name: { fontSize: 28, fontWeight: 900, textTransform: 'uppercase', letterSpacing: 2, color: '#0f172a', marginBottom: 16 },
+    contactRow: { flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap', marginTop: 6 },
     contactItemSpacing: { flexDirection: 'row', alignItems: 'center', marginRight: 14, marginBottom: 4 },
     sectionTitle: { fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 2, color: ac, borderBottomWidth: 1, borderBottomColor: ac, paddingBottom: 3, marginBottom: 10, marginTop: 14 },
     itemWrap: { marginBottom: 10 },
