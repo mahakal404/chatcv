@@ -1,9 +1,9 @@
-import React, { useEffect, useState, useCallback, useRef, useMemo } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { User } from 'firebase/auth';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { db } from '../firebase';
 import { doc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
-import { ChevronLeft, Save, Download, Layout, Palette, Eye, Edit3, Sparkles, Loader2, ZoomIn, ZoomOut, RotateCcw, CheckCircle2, CloudOff, Cloud, Pencil } from 'lucide-react';
+import { ChevronLeft, Save, Download, Layout, Palette, Eye, Edit3, Sparkles, Loader2, ZoomIn, ZoomOut, RotateCcw, CheckCircle2, CloudOff, Cloud, Pencil, RefreshCw, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
 import { handleFirestoreError, OperationType } from '../lib/firestore-errors';
 import { ResumeData, Resume } from '../types';
@@ -31,23 +31,10 @@ function useIsMobile(breakpoint = 640) {
   return isMobile;
 }
 
-// ─── Debounce Hook (Deep Clone) ─────────────────────────────
-function useDebounce<T>(value: T, delay: number): T {
-  const [debounced, setDebounced] = useState(value);
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      // Deep clone to break object reference equality
-      // This forces React.memo / useMemo to detect changes
-      try {
-        setDebounced(JSON.parse(JSON.stringify(value)));
-      } catch {
-        setDebounced(value);
-      }
-    }, delay);
-    return () => clearTimeout(timer);
-  }, [value, delay]);
-  return debounced;
-}
+// ─── NOTE: useDebounce hook removed ─────────────────────────
+// Debounce is now inlined inside BuilderPage using the
+// "Master Debounce" pattern (deep clone + integrated save status)
+// to guarantee React-PDF detects every data mutation.
 
 // ─── Mobile PDF Renderer Component ────────────────────────────
 function MobilePDFPreview({ blobUrl, loading: pdfLoading }: { blobUrl: string | null; loading: boolean }) {
@@ -219,31 +206,60 @@ export default function BuilderPage({ user }: { user: User }) {
   const [viewMode, setViewMode] = useState<'edit' | 'preview'>('edit');
   const [saveStatus, setSaveStatus] = useState<'Typing...' | 'Saving...' | '✅ Saved'>('✅ Saved');
   const [isMounted, setIsMounted] = useState(false);
+  const [debouncedData, setDebouncedData] = useState<ResumeData>(INITIAL_DATA);
   const isMobile = useIsMobile();
   const isInitialLoad = useRef(true);
 
-  // Hydration fix: delay PDF preview until client is fully mounted
+  // ─── Fix 1: Hydration Safety (Blank Screen Prevention) ────────
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  // Single 1000ms debounce for both PDF preview and auto-save (premium feel)
-  const debouncedData = useDebounce(data, 1000);
-
-  // Generate PDF instance using the usePDF hook for mobile preview
-  const pdfDocument = useMemo(
-    () => <ClassicTemplatePDF data={debouncedData} />,
-    [debouncedData]
-  );
-  const [instance, updateInstance] = usePDF({ document: pdfDocument });
-
-  // Update the PDF instance whenever debounced data changes
-  useEffect(() => {
-    updateInstance(<ClassicTemplatePDF data={debouncedData} />);
-  }, [debouncedData, updateInstance]);
-
   // ─── LocalStorage Auto-Save Key ──────────────────────────────
   const draftKey = id ? `chatCV_draft_${id}` : null;
+
+  // ─── Fix 2: Master Debounce (1s delay + Deep Clone) ───────────
+  // Deep-cloning breaks object reference equality so React-PDF
+  // is FORCED to recognise the mutation and regenerate the blob.
+  useEffect(() => {
+    if (!isMounted) return;
+    if (isInitialLoad.current) return;
+
+    setSaveStatus('Typing...');
+    const timer = setTimeout(() => {
+      setSaveStatus('Saving...');
+
+      // DEEP CLONE — the core fix that makes live-preview work
+      const freshData: ResumeData = JSON.parse(JSON.stringify(data));
+      setDebouncedData(freshData);
+
+      // Persist to localStorage as draft
+      if (draftKey) {
+        try {
+          const dataWithTimestamp = { ...freshData, _savedAt: Date.now() };
+          localStorage.setItem(draftKey, JSON.stringify(dataWithTimestamp));
+        } catch (err) {
+          console.error('LocalStorage save failed:', err);
+        }
+      }
+      setSaveStatus('✅ Saved');
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [data, isMounted, draftKey]);
+
+  // ─── Fix 3: usePDF Hook (Background Blob Generation) ──────────
+  const [instance, updateInstance] = usePDF({
+    document: <ClassicTemplatePDF data={debouncedData} />
+  });
+
+  // Force-update the PDF instance whenever debounced data changes
+  useEffect(() => {
+    if (isMounted) {
+      updateInstance(<ClassicTemplatePDF data={debouncedData} />);
+    }
+  }, [debouncedData, isMounted, updateInstance]);
+
 
   // ─── Load from Firestore, then check for newer local draft ───
   useEffect(() => {
@@ -298,29 +314,9 @@ export default function BuilderPage({ user }: { user: User }) {
     fetchResume();
   }, [id, user.uid, navigate, draftKey]);
 
-  // ─── Live Magic: Mark as "Typing..." instantly on keystroke ───
-  useEffect(() => {
-    if (isInitialLoad.current) return;
-    setSaveStatus('Typing...');
-  }, [data]);
-
-  // ─── Live Magic: Auto-save to LocalStorage after debounce ────
-  useEffect(() => {
-    if (isInitialLoad.current || !draftKey) return;
-    setSaveStatus('Saving...');
-    // Use a micro-delay to make the "Saving..." state visible in the UI
-    const saveTimer = setTimeout(() => {
-      try {
-        const dataWithTimestamp = { ...debouncedData, _savedAt: Date.now() };
-        localStorage.setItem(draftKey, JSON.stringify(dataWithTimestamp));
-        setSaveStatus('✅ Saved');
-      } catch (err) {
-        console.error('LocalStorage save failed:', err);
-        setSaveStatus('Typing...');
-      }
-    }, 150);
-    return () => clearTimeout(saveTimer);
-  }, [debouncedData, draftKey]);
+  // ─── Live Magic ───────────────────────────────────────────────
+  // Save-status + auto-save are now handled inside the Master
+  // Debounce effect above (Fix 2). No separate effects needed.
 
   const handleSave = async () => {
     if (!id || !user) return;
@@ -533,53 +529,51 @@ export default function BuilderPage({ user }: { user: User }) {
           </div>
         </div>
 
-        {/* Right Panel: Live PDF Preview */}
-        <div className={`flex-1 overflow-hidden bg-slate-200 ${viewMode === 'edit' ? 'hidden sm:block' : 'block'}`}>
-          {!isMounted ? (
-            /* Hydration guard: show loading skeleton until client is fully mounted */
-            <div className="flex flex-col items-center justify-center h-full gap-4">
-              <div className="relative">
-                <div className="w-16 h-16 rounded-2xl bg-white shadow-lg flex items-center justify-center">
-                  <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
-                </div>
-                <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-indigo-500 flex items-center justify-center shadow-md">
-                  <Sparkles className="w-3 h-3 text-white" />
-                </div>
-              </div>
-              <div className="text-center">
-                <p className="text-sm font-bold text-slate-700">Initializing Preview</p>
-                <p className="text-xs text-slate-400 mt-1">Loading PDF engine...</p>
-              </div>
-            </div>
-          ) : isMobile ? (
+        {/* ═══════════════════════════════════════════════════════════
+            RIGHT PANEL: BULLETPROOF PDF LIVE PREVIEW
+            Architecture: usePDF blob → native <iframe>
+            ═══════════════════════════════════════════════════════════ */}
+        <div className={`flex-1 overflow-hidden ${viewMode === 'edit' ? 'hidden sm:block' : 'block'}`}>
+          {isMobile ? (
+            /* Mobile: Canvas-rendered pages for touch-friendly zoom */
             <MobilePDFPreview
               blobUrl={instance.url}
               loading={instance.loading}
             />
-          ) : instance.loading || !instance.url ? (
-            /* Desktop: Loading state while usePDF generates the blob */
-            <div className="flex flex-col items-center justify-center h-full gap-4">
-              <div className="relative">
-                <div className="w-16 h-16 rounded-2xl bg-white shadow-lg flex items-center justify-center">
-                  <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
-                </div>
-                <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-indigo-500 flex items-center justify-center shadow-md">
-                  <Sparkles className="w-3 h-3 text-white" />
-                </div>
-              </div>
-              <div className="text-center">
-                <p className="text-sm font-bold text-slate-700">Rendering Preview</p>
-                <p className="text-xs text-slate-400 mt-1">Generating your resume...</p>
-              </div>
-            </div>
           ) : (
-            /* Desktop: Native iframe consuming the usePDF blob URL */
-            <iframe
-              key={instance.url}
-              src={instance.url}
-              title="Resume PDF Preview"
-              style={{ width: '100%', height: '100%', border: 'none' }}
-            />
+            /* Desktop: Bulletproof Iframe Viewer */
+            <div className="w-full h-full relative bg-slate-100 flex items-center justify-center overflow-hidden">
+
+              {/* Loading State Overlay */}
+              {(!isMounted || instance.loading) && (
+                <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-slate-50/90 backdrop-blur-sm">
+                  <RefreshCw className="w-8 h-8 animate-spin text-indigo-600 mb-4" />
+                  <p className="text-sm font-bold text-slate-700">
+                    {!isMounted ? 'Initializing Engine...' : 'Rendering Live Preview...'}
+                  </p>
+                  <p className="text-xs text-slate-400 mt-1">Generating your resume...</p>
+                </div>
+              )}
+
+              {/* The Bulletproof Iframe */}
+              {isMounted && instance.url && (
+                <iframe
+                  src={`${instance.url}#toolbar=0`}
+                  className="w-full h-full border-none shadow-2xl"
+                  title="Resume Live Preview"
+                  key={instance.url}
+                />
+              )}
+
+              {/* Error State */}
+              {isMounted && instance.error && (
+                <div className="flex flex-col items-center justify-center gap-3 text-red-500">
+                  <AlertTriangle className="w-10 h-10" />
+                  <p className="font-bold text-sm">Failed to load PDF preview.</p>
+                  <p className="text-xs text-slate-400">Try editing your resume to trigger a re-render.</p>
+                </div>
+              )}
+            </div>
           )}
         </div>
       </main>
