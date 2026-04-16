@@ -2,6 +2,8 @@ import React, { useState, useRef } from 'react';
 import { ResumeData, Experience, Education, Project, Certification, Skill, Language } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
 import { User, Briefcase, GraduationCap, Code, Folder, Sparkles, Plus, Trash2, ChevronDown, ChevronUp, Award, Calculator, ExternalLink, Layers, Languages, Camera, Image as ImageIcon, CheckCircle2, X } from 'lucide-react';
+import Cropper from 'react-easy-crop';
+import getCroppedImg from '../utils/cropImage';
 
 interface ResumeFormProps {
   data: ResumeData;
@@ -13,6 +15,10 @@ const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', '
 
 export default function ResumeForm({ data, setData, onAIImprove }: ResumeFormProps) {
   const [activeSection, setActiveSection] = useState<string | null>('personal');
+  const [imageToCrop, setImageToCrop] = useState<string | null>(null);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -26,10 +32,25 @@ export default function ResumeForm({ data, setData, onAIImprove }: ResumeFormPro
 
     const reader = new FileReader();
     reader.onload = (event) => {
-      const base64 = event.target?.result as string;
-      setData({ ...data, profileImage: base64 });
+      setImageToCrop(event.target?.result as string);
     };
     reader.readAsDataURL(file);
+    e.target.value = ''; // Reset input to allow picking same file if needed
+  };
+
+  const onCropComplete = (croppedArea: any, croppedAreaPixels: any) => {
+    setCroppedAreaPixels(croppedAreaPixels);
+  };
+
+  const finalizeCrop = async () => {
+    try {
+      if (!imageToCrop || !croppedAreaPixels) return;
+      const croppedImageBase64 = await getCroppedImg(imageToCrop, croppedAreaPixels);
+      setData({ ...data, profileImage: croppedImageBase64 });
+      setImageToCrop(null);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const updatePersonalInfo = (field: string, value: string) => {
@@ -244,9 +265,26 @@ export default function ResumeForm({ data, setData, onAIImprove }: ResumeFormPro
 
                 {data.showProfileImage && (
                   <div className="flex flex-col items-center gap-4 p-6 border-2 border-dashed border-slate-200 rounded-2xl bg-slate-50/50">
+                    <div className="w-full flex items-center justify-between mb-2">
+                       <label className="text-[10px] font-black text-slate-400 uppercase">Image Shape:</label>
+                       <select
+                         value={data.profileImageShape || 'circle'}
+                         onChange={(e) => setData({ ...data, profileImageShape: e.target.value as any })}
+                         className="bg-white border border-slate-200 rounded-lg px-2 py-1 text-xs font-bold text-slate-600 focus:outline-none cursor-pointer"
+                       >
+                         <option value="circle">Circle</option>
+                         <option value="rounded">Rounded</option>
+                         <option value="square">Square</option>
+                       </select>
+                    </div>
+
                     {data.profileImage ? (
                       <div className="relative group">
-                        <img src={data.profileImage} alt="Profile" className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-xl" />
+                        <img 
+                          src={data.profileImage} 
+                          alt="Profile" 
+                          className={`w-32 h-32 object-cover border-4 border-white shadow-xl ${data.profileImageShape === 'square' ? 'rounded-none' : data.profileImageShape === 'rounded' ? 'rounded-2xl' : 'rounded-full'}`} 
+                        />
                         <button
                           onClick={() => setData({ ...data, profileImage: null })}
                           className="absolute -top-2 -right-2 bg-red-500 text-white p-1.5 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all"
@@ -255,7 +293,7 @@ export default function ResumeForm({ data, setData, onAIImprove }: ResumeFormPro
                         </button>
                       </div>
                     ) : (
-                      <div className="w-32 h-32 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 border-4 border-white shadow-inner">
+                      <div className={`w-32 h-32 bg-slate-100 flex items-center justify-center text-slate-400 border-4 border-white shadow-inner ${data.profileImageShape === 'square' ? 'rounded-none' : data.profileImageShape === 'rounded' ? 'rounded-2xl' : 'rounded-full'}`}>
                         <ImageIcon className="w-10 h-10" />
                       </div>
                     )}
@@ -263,7 +301,7 @@ export default function ResumeForm({ data, setData, onAIImprove }: ResumeFormPro
                       type="file"
                       ref={fileInputRef}
                       onChange={handlePhotoUpload}
-                      accept="image/*"
+                      accept="image/jpeg, image/png, image/webp, image/gif"
                       className="hidden"
                     />
                     <button
@@ -273,7 +311,45 @@ export default function ResumeForm({ data, setData, onAIImprove }: ResumeFormPro
                       <Plus className="w-4 h-4" />
                       {data.profileImage ? 'Change Photo' : 'Upload Photo'}
                     </button>
-                    <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">Recommended: Square image, min 400x400px</p>
+                  </div>
+                )}
+                
+                {/* Cropping Modal */}
+                {imageToCrop && (
+                  <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/80 p-4 backdrop-blur-sm">
+                    <div className="bg-white rounded-2xl w-full max-w-lg p-6 shadow-2xl flex flex-col">
+                      <div className="flex items-center justify-between xl mb-4">
+                        <h3 className="text-lg font-bold text-slate-800">Crop Image</h3>
+                        <button onClick={() => setImageToCrop(null)} className="text-slate-400 hover:text-slate-600">
+                          <X className="w-5 h-5" />
+                        </button>
+                      </div>
+                      <div className="relative w-full h-80 bg-slate-100 rounded-xl overflow-hidden mb-6">
+                        <Cropper
+                          image={imageToCrop}
+                          crop={crop}
+                          zoom={zoom}
+                          aspect={1}
+                          onCropChange={setCrop}
+                          onCropComplete={onCropComplete}
+                          onZoomChange={setZoom}
+                        />
+                      </div>
+                      <div className="flex gap-3 justify-end mt-auto">
+                        <button 
+                          onClick={() => setImageToCrop(null)} 
+                          className="px-4 py-2 font-bold text-slate-600 bg-slate-100 rounded-xl hover:bg-slate-200"
+                        >
+                          Cancel
+                        </button>
+                        <button 
+                          onClick={finalizeCrop}
+                          className="px-6 py-2 font-bold text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 shadow-lg shadow-indigo-200"
+                        >
+                          Apply Crop
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 )}
 

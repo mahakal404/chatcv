@@ -215,7 +215,7 @@ const SectionHeader = ({ icon, title, color }: { icon: React.ReactNode, title: s
 //  CLASSIC THEME
 // ═══════════════════════════════════════════════════════════════════════
 const ClassicTheme = ({ data }: Props) => {
-  const { personalInfo, summary, experience, education, certifications, skills, languages, projects, customSections, accentColor, skillDisplayStyle, languageDisplayStyle, profileImage, showProfileImage } = data;
+  const { personalInfo, summary, experience, education, certifications, skills, languages, projects, customSections, accentColor, skillDisplayStyle, languageDisplayStyle, profileImage, profileImageShape, showProfileImage } = data;
   const ac = accentColor || '#4f46e5';
 
   const s = StyleSheet.create({
@@ -240,7 +240,7 @@ const ClassicTheme = ({ data }: Props) => {
       <View style={s.headerWrap}>
         {showProfileImage && profileImage && (
           <View style={{ alignItems: 'center', marginBottom: 8 }}>
-            <Image src={profileImage} style={{ width: 80, height: 80, borderRadius: 40, objectFit: 'cover', border: `3px solid ${ac}` }} />
+            <Image src={profileImage} style={{ width: 80, height: 80, borderRadius: profileImageShape === 'square' ? 0 : profileImageShape === 'rounded' ? 12 : 40, objectFit: 'cover', border: `3px solid ${ac}` }} />
           </View>
         )}
         <Text style={s.name}>{personalInfo.fullName || ' '}</Text>
@@ -374,7 +374,7 @@ const ClassicTheme = ({ data }: Props) => {
 //  MODERN THEME 
 // ═══════════════════════════════════════════════════════════════════════
 const ModernTheme = ({ data }: Props) => {
-  const { personalInfo, summary, experience, education, certifications, skills, languages, projects, customSections, accentColor, skillDisplayStyle, languageDisplayStyle, profileImage, showProfileImage } = data;
+  const { personalInfo, summary, experience, education, certifications, skills, languages, projects, customSections, accentColor, skillDisplayStyle, languageDisplayStyle, profileImage, profileImageShape, showProfileImage } = data;
   const ac = accentColor || '#4f46e5';
 
   return (
@@ -382,7 +382,7 @@ const ModernTheme = ({ data }: Props) => {
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', padding: 32, paddingBottom: 20 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, paddingRight: 10 }}>
           {showProfileImage && profileImage && (
-            <Image src={profileImage} style={{ width: 64, height: 64, borderRadius: 32, objectFit: 'cover', border: `3px solid ${ac}`, marginRight: 14 }} />
+            <Image src={profileImage} style={{ width: 64, height: 64, borderRadius: profileImageShape === 'square' ? 0 : profileImageShape === 'rounded' ? 10 : 32, objectFit: 'cover', border: `3px solid ${ac}`, marginRight: 14 }} />
           )}
           <View style={{ flex: 1 }}>
             <Text style={{ fontSize: 26, fontWeight: 900, color: '#0f172a', lineHeight: 1.1, marginBottom: 6 }}>{personalInfo.fullName || ' '}</Text>
@@ -523,7 +523,7 @@ const ModernTheme = ({ data }: Props) => {
 //  CREATIVE THEME
 // ═══════════════════════════════════════════════════════════════════════
 const CreativeTheme = ({ data }: Props) => {
-  const { personalInfo, summary, experience, education, certifications, skills, languages, projects, customSections, accentColor, skillDisplayStyle, languageDisplayStyle, profileImage, showProfileImage } = data;
+  const { personalInfo, summary, experience, education, certifications, skills, languages, projects, customSections, accentColor, skillDisplayStyle, languageDisplayStyle, profileImage, profileImageShape, showProfileImage } = data;
   const ac = accentColor || '#4f46e5';
 
   return (
@@ -531,7 +531,7 @@ const CreativeTheme = ({ data }: Props) => {
       <View style={{ width: '35%', backgroundColor: ac, color: '#ffffff', padding: 24, paddingTop: 32 }}>
         {showProfileImage && profileImage && (
           <View style={{ alignItems: 'center', marginBottom: 12 }}>
-            <Image src={profileImage} style={{ width: 90, height: 90, borderRadius: 45, objectFit: 'cover', border: '3px solid rgba(255,255,255,0.3)' }} />
+            <Image src={profileImage} style={{ width: 90, height: 90, borderRadius: profileImageShape === 'square' ? 0 : profileImageShape === 'rounded' ? 14 : 45, objectFit: 'cover', border: '3px solid rgba(255,255,255,0.3)' }} />
           </View>
         )}
         <Text style={{ fontSize: 20, fontWeight: 900, color: '#ffffff', lineHeight: 1.15, marginBottom: 4 }}>{personalInfo.fullName || ' '}</Text>
@@ -663,7 +663,7 @@ const CreativeTheme = ({ data }: Props) => {
 //  TECH/DEV THEME (Adjusted to utilize full width and balance columns)
 // ═══════════════════════════════════════════════════════════════════════
 const TechTheme = ({ data }: Props) => {
-  const { personalInfo, summary, experience, education, certifications, skills, languages, projects, customSections, accentColor, skillDisplayStyle, languageDisplayStyle, profileImage, showProfileImage } = data;
+  const { personalInfo, summary, experience, education, certifications, skills, languages, projects, customSections, accentColor, skillDisplayStyle, languageDisplayStyle, profileImage, profileImageShape, showProfileImage } = data;
   const ac = accentColor || '#4f46e5';
 
   return (
@@ -678,7 +678,7 @@ const TechTheme = ({ data }: Props) => {
             {showProfileImage && profileImage && (
               <Image 
                 src={profileImage} 
-                style={{ width: 60, height: 60, borderRadius: 30, objectFit: 'cover', border: `2px solid ${ac || '#000'}`, marginRight: 16 }} 
+                style={{ width: 60, height: 60, borderRadius: profileImageShape === 'square' ? 0 : profileImageShape === 'rounded' ? 8 : 30, objectFit: 'cover', border: `2px solid ${ac || '#000'}`, marginRight: 16 }} 
               />
             )}
             

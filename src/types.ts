@@ -68,6 +68,7 @@ export interface Language {
 export interface ResumeData {
   personalInfo: PersonalInfo;
   profileImage?: string | null;
+  profileImageShape?: 'circle' | 'square' | 'rounded';
   showProfileImage?: boolean;
   summary: string;
   experience: Experience[];
