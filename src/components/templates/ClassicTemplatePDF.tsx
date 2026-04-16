@@ -670,29 +670,54 @@ const TechTheme = ({ data }: Props) => {
     <Page size="A4" style={{ fontFamily: 'Inter', fontSize: 9, color: '#334155', padding: 28, lineHeight: 1.4 }}>
       <View style={{ borderBottomWidth: 3, borderBottomColor: '#0f172a', paddingBottom: 16, marginBottom: 20 }}>
         {/* Full Header Layout FIX to prevent clipping and overlay overlap */}
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
 
-          <View style={{ flexDirection: 'row', flex: 1, paddingRight: 15 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, paddingRight: 16 }}>
             {showProfileImage && profileImage && (
-              <Image src={profileImage} style={{ width: 50, height: 50, borderRadius: 25, objectFit: 'cover', border: `2px solid ${ac}`, marginRight: 15 }} />
+              <Image src={profileImage} style={{ width: 50, height: 50, borderRadius: 25, objectFit: 'cover', border: `2px solid ${ac}`, marginRight: 16 }} />
             )}
-            <View style={{ flex: 1 }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }}>
+            <View style={{ flexDirection: 'column', flex: 1 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 6 }}>
                 <View style={{ marginRight: 8, display: 'flex', justifyContent: 'center' }}>{terminalIcon({ size: 16, color: ac })}</View>
                 <Text style={{ fontSize: 24, fontWeight: 900, letterSpacing: -0.5, color: '#0f172a', textTransform: 'uppercase' }}>{personalInfo.fullName || ' '}</Text>
               </View>
-              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 6 }}>
-                {personalInfo.email && <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 6 }}><View style={{ marginRight: 4 }}>{mailIcon({ size: 9, color: '#64748b' })}</View><Text style={{ fontSize: 8, color: '#475569', fontWeight: 500 }}>{personalInfo.email || ' '}</Text></View>}
-                {personalInfo.phone && <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 6 }}><View style={{ marginRight: 4 }}>{phoneIcon({ size: 9, color: '#64748b' })}</View><Text style={{ fontSize: 8, color: '#475569', fontWeight: 500 }}>{personalInfo.phone || ' '}</Text></View>}
-                {personalInfo.address && <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 6 }}><View style={{ marginRight: 4 }}>{mapPinIcon({ size: 9, color: '#64748b' })}</View><Text style={{ fontSize: 8, color: '#475569', fontWeight: 500 }}>{personalInfo.address || ' '}</Text></View>}
-                {personalInfo.linkedin && <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 6 }}><View style={{ marginRight: 4 }}>{linkedInIcon({ size: 9, color: '#64748b' })}</View><Text style={{ fontSize: 8, color: '#475569', fontWeight: 500 }}>{personalInfo.linkedin || ' '}</Text></View>}
-                {personalInfo.portfolio && <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 6 }}><View style={{ marginRight: 4 }}>{globeIcon({ size: 9, color: '#64748b' })}</View><Text style={{ fontSize: 8, color: '#475569', fontWeight: 500 }}>{personalInfo.portfolio || ' '}</Text></View>}
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', columnGap: 16, rowGap: 4 }}>
+                {personalInfo.email && (
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                    {mailIcon({ size: 9, color: '#64748b' })}
+                    <Text style={{ fontSize: 8, color: '#475569', fontWeight: 500 }}>{personalInfo.email || ' '}</Text>
+                  </View>
+                )}
+                {personalInfo.phone && (
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                    {phoneIcon({ size: 9, color: '#64748b' })}
+                    <Text style={{ fontSize: 8, color: '#475569', fontWeight: 500 }}>{personalInfo.phone || ' '}</Text>
+                  </View>
+                )}
+                {personalInfo.address && (
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                    {mapPinIcon({ size: 9, color: '#64748b' })}
+                    <Text style={{ fontSize: 8, color: '#475569', fontWeight: 500 }}>{personalInfo.address || ' '}</Text>
+                  </View>
+                )}
+                {personalInfo.linkedin && (
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                    {linkedInIcon({ size: 9, color: '#64748b' })}
+                    <Text style={{ fontSize: 8, color: '#475569', fontWeight: 500 }}>{personalInfo.linkedin || ' '}</Text>
+                  </View>
+                )}
+                {personalInfo.portfolio && (
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                    {globeIcon({ size: 9, color: '#64748b' })}
+                    <Text style={{ fontSize: 8, color: '#475569', fontWeight: 500 }}>{personalInfo.portfolio || ' '}</Text>
+                  </View>
+                )}
               </View>
             </View>
           </View>
 
           <View style={{ flexShrink: 0 }}>
-            <View style={{ backgroundColor: '#0f172a', padding: 8, paddingHorizontal: 12, borderRadius: 4, alignSelf: 'flex-start' }}>
+            <View style={{ backgroundColor: '#0f172a', padding: 8, paddingHorizontal: 12, borderRadius: 4 }}>
               <Text style={{ fontSize: 7, fontWeight: 800, color: '#ffffff', textTransform: 'uppercase', letterSpacing: 2 }}>{`< STATUS: `}<Text style={{ color: '#4ade80' }}>ACTIVE</Text>{` />`}</Text>
             </View>
           </View>
