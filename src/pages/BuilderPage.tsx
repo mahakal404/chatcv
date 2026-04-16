@@ -206,6 +206,7 @@ export default function BuilderPage({ user }: { user: User }) {
   const [viewMode, setViewMode] = useState<'edit' | 'preview'>('edit');
   const [saveStatus, setSaveStatus] = useState<'Typing...' | 'Saving...' | '✅ Saved'>('✅ Saved');
   const [debouncedData, setDebouncedData] = useState<ResumeData>(INITIAL_DATA);
+  const [isDataReady, setIsDataReady] = useState(false);
   const isMobile = useIsMobile();
   const isInitialLoad = useRef(true);
 
@@ -272,6 +273,7 @@ export default function BuilderPage({ user }: { user: User }) {
                   setData(draftData);
                   // CRITICAL FIX: Instantly provide the saved data to the PDF engine on load
                   setDebouncedData(draftData);
+                  setIsDataReady(true);
                   toast.info('Restored your unsaved local draft.', { duration: 4000 });
                   // Mark initial load done so auto-save doesn't re-trigger immediately
                   setTimeout(() => { isInitialLoad.current = false; }, 2000);
@@ -288,6 +290,7 @@ export default function BuilderPage({ user }: { user: User }) {
           setData(resumeData.data);
           // CRITICAL FIX: Instantly provide the loaded data to the PDF engine
           setDebouncedData(resumeData.data);
+          setIsDataReady(true);
         } else {
           navigate('/dashboard');
         }
@@ -521,7 +524,13 @@ export default function BuilderPage({ user }: { user: User }) {
             Architecture: usePDF blob → native <iframe>
             ═══════════════════════════════════════════════════════════ */}
         <div className={`flex-1 overflow-hidden ${viewMode === 'edit' ? 'hidden sm:block' : 'block'}`}>
-          <BlobProvider document={<ClassicTemplatePDF data={debouncedData} />}>
+          {!isDataReady ? (
+            <div className="w-full h-full relative bg-slate-50 flex flex-col items-center justify-center animate-pulse">
+              <RefreshCw className="w-8 h-8 animate-spin text-indigo-500 mb-2" />
+              <p className="font-medium text-slate-600">Loading your draft...</p>
+            </div>
+          ) : (
+            <BlobProvider document={<ClassicTemplatePDF data={debouncedData} />}>
             {({ blob, url, loading, error }) => {
               if (error) {
                 console.error("PDF Rendering Error:", error);
@@ -569,6 +578,7 @@ export default function BuilderPage({ user }: { user: User }) {
               );
             }}
           </BlobProvider>
+          )}
         </div>
       </main>
       <AIChatbot />
