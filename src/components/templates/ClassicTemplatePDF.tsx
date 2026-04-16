@@ -683,51 +683,51 @@ const TechTheme = ({ data }: Props) => {
             )}
             
             {/* Name & Contact Container */}
-            <View style={{ flexDirection: 'column', flex: 1, paddingTop: 2 }}>
+            <View style={{ flexDirection: 'column', flex: 1 }}>
               
-              {/* Name Section */}
-              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
-                <View style={{ marginRight: 8 }}>
+              {/* Name Section - STRICTLY LOCKED */}
+              <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginBottom: 12 }}>
+                <View style={{ marginRight: 8, marginTop: 4 }}>
                   {terminalIcon({ size: 16, color: ac || '#0f172a' })}
                 </View>
-                <Text style={{ fontSize: 24, fontWeight: 900, color: '#0f172a', textTransform: 'uppercase' }}>
+                <Text style={{ fontSize: 24, fontWeight: 900, color: '#0f172a', textTransform: 'uppercase', flex: 1 }}>
                   {personalInfo?.fullName || 'YOUR NAME'}
                 </Text>
               </View>
               
-              {/* Refactored Contact Details (NO GAP - STRICTLY USING MARGINS) */}
+              {/* Refactored Contact Details */}
               <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
                 
                 {personalInfo?.email && (
-                  <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 16, marginBottom: 6 }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 16, marginBottom: 8 }}>
                     <View style={{ marginRight: 4 }}>{mailIcon({ size: 9, color: '#64748b' })}</View>
                     <Text style={{ fontSize: 9, color: '#475569', fontWeight: 500 }}>{personalInfo.email}</Text>
                   </View>
                 )}
                 
                 {personalInfo?.phone && (
-                  <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 16, marginBottom: 6 }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 16, marginBottom: 8 }}>
                     <View style={{ marginRight: 4 }}>{phoneIcon({ size: 9, color: '#64748b' })}</View>
                     <Text style={{ fontSize: 9, color: '#475569', fontWeight: 500 }}>{personalInfo.phone}</Text>
                   </View>
                 )}
                 
                 {personalInfo?.address && (
-                  <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 16, marginBottom: 6 }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 16, marginBottom: 8 }}>
                     <View style={{ marginRight: 4 }}>{mapPinIcon({ size: 9, color: '#64748b' })}</View>
                     <Text style={{ fontSize: 9, color: '#475569', fontWeight: 500 }}>{personalInfo.address}</Text>
                   </View>
                 )}
                 
                 {personalInfo?.linkedin && (
-                  <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 16, marginBottom: 6 }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 16, marginBottom: 8 }}>
                     <View style={{ marginRight: 4 }}>{linkedInIcon({ size: 9, color: '#64748b' })}</View>
                     <Text style={{ fontSize: 9, color: '#475569', fontWeight: 500 }}>{personalInfo.linkedin}</Text>
                   </View>
                 )}
                 
                 {personalInfo?.portfolio && (
-                  <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 16, marginBottom: 6 }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 16, marginBottom: 8 }}>
                     <View style={{ marginRight: 4 }}>{globeIcon({ size: 9, color: '#64748b' })}</View>
                     <Text style={{ fontSize: 9, color: '#475569', fontWeight: 500 }}>{personalInfo.portfolio}</Text>
                   </View>
