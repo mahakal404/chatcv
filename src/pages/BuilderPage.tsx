@@ -205,15 +205,10 @@ export default function BuilderPage({ user }: { user: User }) {
   const [saving, setSaving] = useState(false);
   const [viewMode, setViewMode] = useState<'edit' | 'preview'>('edit');
   const [saveStatus, setSaveStatus] = useState<'Typing...' | 'Saving...' | '✅ Saved'>('✅ Saved');
-  const [isMounted, setIsMounted] = useState(false);
   const [debouncedData, setDebouncedData] = useState<ResumeData>(INITIAL_DATA);
   const isMobile = useIsMobile();
   const isInitialLoad = useRef(true);
 
-  // ─── Fix 1: Hydration Safety (Blank Screen Prevention) ────────
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   // ─── LocalStorage Auto-Save Key ──────────────────────────────
   const draftKey = id ? `chatCV_draft_${id}` : null;
@@ -222,7 +217,6 @@ export default function BuilderPage({ user }: { user: User }) {
   // Deep-cloning breaks object reference equality so React-PDF
   // is FORCED to recognise the mutation and regenerate the blob.
   useEffect(() => {
-    if (!isMounted) return;
     if (isInitialLoad.current) return;
 
     setSaveStatus('Typing...');
@@ -246,7 +240,7 @@ export default function BuilderPage({ user }: { user: User }) {
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [data, isMounted, draftKey]);
+  }, [data, draftKey]);
 
   // ─── Fix 3: usePDF Hook (Background Blob Generation) ──────────
   const [instance, updateInstance] = usePDF({
@@ -255,10 +249,8 @@ export default function BuilderPage({ user }: { user: User }) {
 
   // Force-update the PDF instance whenever debounced data changes
   useEffect(() => {
-    if (isMounted) {
-      updateInstance(<ClassicTemplatePDF data={debouncedData} />);
-    }
-  }, [debouncedData, isMounted, updateInstance]);
+    updateInstance(<ClassicTemplatePDF data={debouncedData} />);
+  }, [debouncedData, updateInstance]);
 
 
   // ─── Load from Firestore, then check for newer local draft ───
@@ -545,29 +537,31 @@ export default function BuilderPage({ user }: { user: User }) {
             <div className="w-full h-full relative bg-slate-100 flex items-center justify-center overflow-hidden">
 
               {/* Loading State Overlay */}
-              {(!isMounted || instance.loading) && (
+              {instance.loading && (
                 <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-slate-50/90 backdrop-blur-sm">
                   <RefreshCw className="w-8 h-8 animate-spin text-indigo-600 mb-4" />
-                  <p className="text-sm font-bold text-slate-700">
-                    {!isMounted ? 'Initializing Engine...' : 'Rendering Live Preview...'}
-                  </p>
+                  <p className="text-sm font-bold text-slate-700">Updating Live Preview...</p>
                   <p className="text-xs text-slate-400 mt-1">Generating your resume...</p>
                 </div>
               )}
 
               {/* The Bulletproof Iframe */}
-              {isMounted && instance.url && (
+              {instance.url ? (
                 <iframe
                   src={`${instance.url}#toolbar=0`}
                   className="w-full h-full border-none shadow-2xl"
                   title="Resume Live Preview"
                   key={instance.url}
                 />
+              ) : (
+                <div className="flex flex-col items-center justify-center gap-3 text-slate-500">
+                  <p className="font-bold text-sm">Initializing PDF Engine...</p>
+                </div>
               )}
 
               {/* Error State */}
-              {isMounted && instance.error && (
-                <div className="flex flex-col items-center justify-center gap-3 text-red-500">
+              {instance.error && (
+                <div className="flex flex-col items-center justify-center gap-3 text-red-500 absolute inset-0 bg-white z-20">
                   <AlertTriangle className="w-10 h-10" />
                   <p className="font-bold text-sm">Failed to load PDF preview.</p>
                   <p className="text-xs text-slate-400">Try editing your resume to trigger a re-render.</p>
