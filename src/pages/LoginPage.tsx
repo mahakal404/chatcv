@@ -5,6 +5,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { FileText, Mail, Lock, Sparkles, User } from 'lucide-react';
 import { FcGoogle } from 'react-icons/fc';
+import desktopLogo from '../assets/chatcv_desk.webp';
 
 export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -142,14 +143,8 @@ export default function LoginPage() {
         className="bg-white p-8 rounded-3xl shadow-2xl shadow-slate-200 w-full max-w-md border border-slate-100"
       >
         <div className="flex flex-col items-center mb-10">
-          <Link to="/" className="flex items-center gap-3 mb-6 hover:opacity-90 transition-opacity">
-            <div className="logo-icon-gradient p-2.5 rounded-full shadow-lg shadow-brand-indigo/20 relative group">
-              <Sparkles className="text-white w-7 h-7" />
-              <div className="absolute bottom-2 left-2 w-1.5 h-1.5 bg-white rounded-full opacity-80" />
-            </div>
-            <span className="text-3xl font-black tracking-tighter">
-              <span className="text-brand-indigo">Chat</span><span className="text-brand-pink">CV</span>
-            </span>
+          <Link to="/" className="flex items-center mb-6 hover:opacity-90 transition-opacity">
+            <img src={desktopLogo} alt="ChatCV Logo" className="h-10 w-auto object-contain" />
           </Link>
           
           <h1 className="text-3xl font-bold text-slate-900 tracking-tight text-center">

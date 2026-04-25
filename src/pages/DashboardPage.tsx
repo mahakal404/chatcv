@@ -8,6 +8,7 @@ import { Plus, FileText, Trash2, LogOut, Clock, ChevronRight, Sparkles, Wand2, A
 import { Resume } from '../types';
 import { AnimatePresence } from 'motion/react';
 import { toast } from 'sonner';
+import desktopLogo from '../assets/chatcv_desk.webp';
 
 interface DeleteConfirmModalProps {
   isOpen: boolean;
@@ -186,14 +187,8 @@ export default function DashboardPage({ user }: { user: User }) {
       />
       {/* Header */}
       <header className="bg-white border-b border-slate-200 px-8 py-4 flex items-center justify-between sticky top-0 z-50">
-        <Link to="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
-          <div className="logo-icon-gradient p-2 rounded-full shadow-lg shadow-brand-indigo/20 relative group">
-            <Sparkles className="text-white w-5 h-5" />
-            <div className="absolute bottom-1.5 left-1.5 w-1 h-1 bg-white rounded-full opacity-80" />
-          </div>
-          <span className="text-xl font-black tracking-tighter">
-            <span className="text-brand-indigo">Chat</span><span className="text-brand-pink">CV</span>
-          </span>
+        <Link to="/" className="flex items-center flex-shrink-0 hover:opacity-90 transition-opacity">
+          <img src={desktopLogo} alt="ChatCV Logo" className="h-10 w-auto object-contain" />
         </Link>
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-3">

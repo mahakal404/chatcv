@@ -14,6 +14,7 @@ import { GoogleGenAI, ThinkingLevel } from '@google/genai';
 import { PDFDownloadLink, BlobProvider } from '@react-pdf/renderer';
 import ClassicTemplatePDF from '../components/templates/ClassicTemplatePDF';
 import * as pdfjsLib from 'pdfjs-dist';
+import desktopLogo from '../assets/chatcv_desk.webp';
 
 // Configure pdf.js worker
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
@@ -370,14 +371,8 @@ export default function BuilderPage({ user }: { user: User }) {
           <Link to="/dashboard" className="p-2 hover:bg-slate-100 rounded-lg transition-all text-slate-500">
             <ChevronLeft className="w-5 h-5" />
           </Link>
-          <Link to="/" className="flex items-center gap-2 hover:opacity-90 transition-opacity">
-            <div className="logo-icon-gradient p-1.5 rounded-full shadow-lg shadow-brand-indigo/20 relative group">
-              <Sparkles className="text-white w-4 h-4" />
-              <div className="absolute bottom-1 left-1 w-0.5 h-0.5 bg-white rounded-full opacity-80" />
-            </div>
-            <span className="text-lg font-black tracking-tighter hidden sm:block">
-              <span className="text-brand-indigo">Chat</span><span className="text-brand-pink">CV</span>
-            </span>
+          <Link to="/" className="flex items-center flex-shrink-0 hover:opacity-90 transition-opacity">
+            <img src={desktopLogo} alt="ChatCV Logo" className="h-8 w-auto object-contain" />
           </Link>
           <div className="h-6 w-px bg-slate-200 hidden sm:block" />
           <div className="hidden sm:block">

@@ -301,13 +301,8 @@ export default function LandingPage({ user }: { user: FirebaseUser | null }) {
       <footer className="bg-white border-t border-slate-100 pt-20 pb-12 px-8">
         <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-12 mb-16">
           <div className="col-span-2 md:col-span-1">
-            <Link to="/" className="flex items-center gap-3 mb-6">
-              <div className="logo-icon-gradient p-2 rounded-full shadow-lg shadow-brand-indigo/20">
-                <Sparkles className="text-white w-5 h-5" />
-              </div>
-              <span className="text-2xl font-black tracking-tighter">
-                <span className="text-brand-indigo">Chat</span><span className="text-brand-pink">CV</span>
-              </span>
+            <Link to="/" className="flex items-center mb-6 hover:opacity-90 transition-opacity">
+              <img src={desktopLogo} alt="ChatCV Logo" className="h-10 w-auto object-contain" />
             </Link>
             <p className="text-slate-500 text-sm leading-relaxed font-medium mb-6">
               The world's most advanced <strong>Free AI Resume Builder</strong>. Create professional templates and ATS-friendly CVs in minutes.
