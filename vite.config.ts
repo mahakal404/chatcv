@@ -13,6 +13,9 @@ export default defineConfig(({mode}) => {
       VitePWA({
         registerType: 'autoUpdate',
         includeAssets: ['chatcv_fevi.webp'],
+        workbox: {
+          maximumFileSizeToCacheInBytes: 5 * 1024 * 1024 // 5 MB
+        },
         manifest: {
           name: 'ChatCV - Free AI Resume Builder',
           short_name: 'ChatCV',
