@@ -538,7 +538,11 @@ export default function BuilderPage({ user }: { user: User }) {
                 );
               }
 
-              if (isMobile) {
+              const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+              const isMobileView = window.innerWidth < 1024;
+              const shouldShowButton = isMobileView && isTouchDevice;
+
+              if (shouldShowButton) {
                 return (
                   <div className="w-full h-full flex flex-col items-center justify-center gap-6 bg-slate-50 p-8">
                     <div className="text-center">
