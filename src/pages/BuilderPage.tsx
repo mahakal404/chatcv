@@ -545,10 +545,30 @@ export default function BuilderPage({ user }: { user: User }) {
 
               if (isMobile) {
                 return (
-                  <MobilePDFPreview
-                    blobUrl={url}
-                    loading={loading}
-                  />
+                  <div className="w-full h-full flex flex-col items-center justify-center gap-6 bg-slate-50 p-8">
+                    <div className="text-center">
+                      <div className="w-20 h-20 rounded-2xl bg-violet-100 flex items-center justify-center mx-auto mb-4">
+                        <Eye className="w-10 h-10 text-violet-600" />
+                      </div>
+                      <h3 className="text-xl font-bold text-slate-900 mb-2">Your Resume is Ready</h3>
+                      <p className="text-sm text-slate-500 max-w-xs">Tap below to open a full-screen, high-quality preview of your resume in a new tab.</p>
+                    </div>
+                    <button
+                      onClick={() => {
+                        if (url) window.open(url, '_blank');
+                        else toast.info('PDF is still generating, please wait...');
+                      }}
+                      disabled={loading}
+                      className="flex items-center gap-2 text-white px-6 py-3 rounded-lg font-bold text-base shadow-lg shadow-violet-500/30 hover:shadow-xl hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-wait"
+                      style={{ backgroundColor: '#7C3AED' }}
+                    >
+                      {loading ? (
+                        <><Loader2 className="w-5 h-5 animate-spin" /> Generating...</>
+                      ) : (
+                        <><Sparkles className="w-5 h-5" /> View Live Resume</>
+                      )}
+                    </button>
+                  </div>
                 );
               }
 
