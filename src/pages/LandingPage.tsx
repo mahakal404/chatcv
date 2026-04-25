@@ -32,8 +32,8 @@ export default function LandingPage({ user }: { user: FirebaseUser | null }) {
     <div className="min-h-screen bg-magic-gradient font-sans">
       {/* Navbar */}
       <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-gray-100 transition-all duration-300">
-        <div className="container mx-auto px-4 py-3 md:py-4 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0">
-          <Link to="/" className="flex items-center gap-2">
+        <div className="container mx-auto px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0">
+          <Link to="/" className="flex items-center flex-shrink-0">
             <img src={desktopLogo} alt="ChatCV Logo" className="h-16 w-auto object-contain" />
           </Link>
           <div className="flex items-center justify-center gap-3 w-full md:w-auto">
