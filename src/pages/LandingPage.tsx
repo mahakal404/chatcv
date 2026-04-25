@@ -3,6 +3,7 @@ import { User as FirebaseUser } from 'firebase/auth';
 import { motion, AnimatePresence } from 'motion/react';
 import { FileText, Sparkles, Layout, Download, Zap, Wand2, ChevronDown, CheckCircle2, ArrowRight, ShieldCheck, Globe, HelpCircle, User } from 'lucide-react';
 import { useState } from 'react';
+import desktopLogo from '../assets/chatcv_desk.webp';
 
 export default function LandingPage({ user }: { user: FirebaseUser | null }) {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
@@ -32,14 +33,8 @@ export default function LandingPage({ user }: { user: FirebaseUser | null }) {
       {/* Navbar */}
       <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-gray-100 transition-all duration-300">
         <div className="container mx-auto px-4 py-3 md:py-4 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0">
-          <Link to="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
-            <div className="logo-icon-gradient p-2.5 rounded-full shadow-lg shadow-brand-indigo/20 relative group">
-              <Sparkles className="text-white w-7 h-7" />
-              <div className="absolute bottom-2 left-2 w-1.5 h-1.5 bg-white rounded-full opacity-80 group-hover:scale-125 transition-transform" />
-            </div>
-            <span className="text-3xl font-black tracking-tighter">
-              <span className="text-brand-indigo">Chat</span><span className="text-brand-pink">CV</span>
-            </span>
+          <Link to="/" className="flex items-center gap-2">
+            <img src={desktopLogo} alt="ChatCV Logo" className="h-10 w-auto object-contain" />
           </Link>
           <div className="flex items-center justify-center gap-3 w-full md:w-auto">
             {!user && (
