@@ -26,9 +26,15 @@ export default defineConfig(({mode}) => {
           icons: [
             {
               src: '/chatcv_fevi.webp',
+              sizes: '192x192',
+              type: 'image/webp',
+              purpose: 'any'
+            },
+            {
+              src: '/chatcv_fevi.webp',
               sizes: '512x512',
               type: 'image/webp',
-              purpose: 'any maskable'
+              purpose: 'maskable'
             }
           ]
         }
