@@ -1,11 +1,31 @@
 import React, { useState } from 'react';
-import { auth, googleProvider } from '../firebase';
+import { auth, googleProvider, db } from '../firebase';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, updateProfile, sendPasswordResetEmail } from 'firebase/auth';
+import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { FileText, Mail, Lock, Sparkles, User } from 'lucide-react';
 import { FcGoogle } from 'react-icons/fc';
 import desktopLogo from '../assets/chatcv_desk.webp';
+
+/** Ensures a user profile document exists in Firestore with tokens:5 for new users */
+async function ensureUserProfile(uid: string, email: string, displayName: string) {
+  const ref = doc(db, 'users', uid);
+  const snap = await getDoc(ref);
+  if (!snap.exists()) {
+    await setDoc(ref, {
+      uid,
+      email,
+      displayName,
+      tokens: 5,
+      createdAt: serverTimestamp(),
+    });
+  } else if (snap.data().tokens === undefined) {
+    // Existing account missing tokens field — backfill
+    const { updateDoc } = await import('firebase/firestore');
+    await updateDoc(ref, { tokens: 5 });
+  }
+}
 
 export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -36,8 +56,17 @@ export default function LoginPage() {
           });
         } catch (profileErr) {
           console.error('Error updating profile:', profileErr);
-          // We don't necessarily want to block the user if only the profile update fails, 
-          // but we should log it.
+        }
+
+        // ─── Create Firestore profile with 5 starter tokens ───
+        try {
+          await ensureUserProfile(
+            userCredential.user.uid,
+            userCredential.user.email ?? email,
+            `${firstName} ${lastName}`.trim()
+          );
+        } catch (profileErr) {
+          console.error('Error creating user profile:', profileErr);
         }
       }
       navigate('/dashboard');
@@ -90,7 +119,17 @@ export default function LoginPage() {
     setError('');
     setSuccessMessage('');
     try {
-      await signInWithPopup(auth, googleProvider);
+      const result = await signInWithPopup(auth, googleProvider);
+      // ─── Create Firestore profile with 5 starter tokens (no-op if already exists)
+      try {
+        await ensureUserProfile(
+          result.user.uid,
+          result.user.email ?? '',
+          result.user.displayName ?? ''
+        );
+      } catch (profileErr) {
+        console.error('Error creating Google user profile:', profileErr);
+      }
       navigate('/dashboard');
     } catch (err: any) {
       console.error('Google sign-in error:', err.code, err.message);
