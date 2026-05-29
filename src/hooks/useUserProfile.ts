@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
 import { User } from 'firebase/auth';
 import { db } from '../firebase';
-import { doc, onSnapshot, setDoc, updateDoc } from 'firebase/firestore';
+import { doc, onSnapshot, setDoc, updateDoc, deleteField } from 'firebase/firestore';
+import { toast } from 'sonner';
+
+export const ADMIN_EMAIL = 'rc6542698@gmail.com';
 
 export interface UserProfile {
   uid: string;
@@ -9,6 +12,10 @@ export interface UserProfile {
   displayName: string;
   tokens: number;
   createdAt?: any;
+  pendingGift?: {
+    amount: number;
+    message: string;
+  };
 }
 
 /**
@@ -53,7 +60,18 @@ export function useUserProfile(user: User | null) {
     // Real-time listener
     const unsub = onSnapshot(ref, (snap) => {
       if (snap.exists()) {
-        setProfile(snap.data() as UserProfile);
+        const data = snap.data() as UserProfile;
+        setProfile(data);
+        
+        // Handle incoming gift notification
+        if (data.pendingGift) {
+          toast.success(data.pendingGift.message, { 
+            duration: 6000,
+            icon: '🎁'
+          });
+          // Clear the gift field so it doesn't show again
+          updateDoc(ref, { pendingGift: deleteField() }).catch(console.error);
+        }
       }
       setProfileLoading(false);
     });
@@ -64,6 +82,12 @@ export function useUserProfile(user: User | null) {
   /** Atomically deduct `amount` tokens (default 1). Returns new balance. */
   const deductToken = async (amount = 1): Promise<number> => {
     if (!user || !profile) throw new Error('Not authenticated');
+    
+    // Infinity tokens for Super Admin
+    if (user.email === ADMIN_EMAIL) {
+      return profile.tokens;
+    }
+
     const newBalance = Math.max(0, profile.tokens - amount);
     await updateDoc(doc(db, 'users', user.uid), { tokens: newBalance });
     return newBalance;

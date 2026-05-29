@@ -9,6 +9,7 @@ import DashboardPage from './pages/DashboardPage';
 import BuilderPage from './pages/BuilderPage';
 import AIBuilderPage from './pages/AIBuilderPage';
 import AIAssistantPage from './pages/AIAssistantPage';
+import AdminPage from './pages/AdminPage';
 
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
@@ -40,6 +41,7 @@ export default function App() {
         <Route path="/builder/:id?" element={<BuilderPage user={user} />} />
         <Route path="/ai-builder" element={user ? <AIBuilderPage user={user} /> : <Navigate to="/login" />} />
         <Route path="/ai-assistant" element={user ? <AIAssistantPage user={user} /> : <Navigate to="/login" />} />
+        <Route path="/admin" element={<AdminPage user={user} />} />
       </Routes>
     </Router>
   );

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Coins, Plus } from 'lucide-react';
-import { useUserProfile } from '../hooks/useUserProfile';
+import { useUserProfile, ADMIN_EMAIL } from '../hooks/useUserProfile';
 import EarnTokenModal from './EarnTokenModal';
 import { User } from 'firebase/auth';
 
@@ -22,9 +22,12 @@ export default function TokenBox({ user }: TokenBoxProps) {
   if (!user || !profile) return null;
 
   const tokens = profile.tokens ?? 0;
+  const isInfinity = user.email === ADMIN_EMAIL;
 
   const gradientClass =
-    tokens === 0
+    isInfinity
+      ? 'bg-gradient-to-r from-indigo-600 to-violet-600 border-indigo-400/40' // Always healthy for admin
+      : tokens === 0
       ? 'bg-gradient-to-r from-red-500 to-rose-600 border-red-400/40'
       : tokens <= 2
       ? 'bg-gradient-to-r from-amber-500 to-orange-500 border-amber-400/40'
@@ -51,7 +54,7 @@ export default function TokenBox({ user }: TokenBoxProps) {
             Balance
           </span>
           <span className="text-[11px] sm:text-sm font-extrabold text-white leading-none flex items-center gap-1">
-            {tokens} 🪙 <Plus className="w-3 h-3 sm:w-4 sm:h-4 text-white/80" />
+            {isInfinity ? '∞' : tokens} 🪙 <Plus className="w-3 h-3 sm:w-4 sm:h-4 text-white/80" />
           </span>
         </div>
       </button>
