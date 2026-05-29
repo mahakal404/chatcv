@@ -9,6 +9,7 @@ import { Resume } from '../types';
 import { AnimatePresence } from 'motion/react';
 import { toast } from 'sonner';
 import desktopLogo from '../assets/chatcv_desk.webp';
+import TokenBox from '../components/TokenBox';
 
 interface DeleteConfirmModalProps {
   isOpen: boolean;
@@ -262,6 +263,7 @@ export default function DashboardPage({ user }: { user: User }) {
               </div>
             )}
           </div>
+          <TokenBox user={user} />
           <button onClick={handleLogoutRequest} className="text-slate-500 hover:text-red-600 transition-all" title="Logout">
             <LogOut className="w-5 h-5" />
           </button>

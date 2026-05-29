@@ -11,6 +11,7 @@ import ResumeForm from '../components/ResumeForm';
 import AIChatbot from '../components/AIChatbot';
 import { GoogleGenAI, ThinkingLevel } from '@google/genai';
 import { useUserProfile } from '../hooks/useUserProfile';
+import TokenBox from '../components/TokenBox';
 
 // ─── Guest LocalStorage Key ───────────────────────────────────
 const GUEST_DATA_KEY = 'chatcv_guest_data';
@@ -542,32 +543,7 @@ export default function BuilderPage({ user }: { user: User | null }) {
 
         <div className="flex items-center gap-2 sm:gap-4">
           {/* ── Premium Token Box ── logged-in only ───────────── */}
-          {!isGuest && profile && (
-            <div
-              className={`flex items-center gap-1.5 sm:gap-2.5 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl border shadow-lg transition-all cursor-default select-none ${
-                tokens === 0
-                  ? 'bg-gradient-to-r from-red-500 to-rose-600 border-red-400/40'
-                  : tokens <= 2
-                  ? 'bg-gradient-to-r from-amber-500 to-orange-500 border-amber-400/40'
-                  : 'bg-gradient-to-r from-indigo-600 to-violet-600 border-indigo-400/40'
-              } shadow-indigo-200`}
-              title="Tokens are used for PDF downloads. Watch an ad to earn more."
-            >
-              {/* Animated coin icon */}
-              <div className="relative flex-shrink-0">
-                <Coins
-                  className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-300 drop-shadow-sm"
-                  style={{ animation: 'spin 4s linear infinite' }}
-                />
-              </div>
-              <div className="flex flex-col leading-tight">
-                <span className="text-[7px] sm:text-[9px] font-bold text-white/70 uppercase tracking-widest">Balance</span>
-                <span className="text-[11px] sm:text-sm font-extrabold text-white leading-none">
-                  {tokens} 🪙
-                </span>
-              </div>
-            </div>
-          )}
+          {!isGuest && <TokenBox user={user} />}
 
           {/* Guest Banner */}
           {isGuest && (
