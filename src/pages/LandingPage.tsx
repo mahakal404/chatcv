@@ -43,7 +43,7 @@ export default function LandingPage({ user }: { user: FirebaseUser | null }) {
               </Link>
             )}
             <Link 
-              to={user ? "/dashboard" : "/login"} 
+              to={user ? "/dashboard" : "/builder"} 
               className="bg-brand-dark text-white px-6 py-2.5 rounded-full font-bold hover:bg-slate-800 transition-all shadow-lg shadow-slate-900/10 whitespace-nowrap"
             >
               {user ? 'Dashboard' : 'Get Started'}
@@ -71,14 +71,14 @@ export default function LandingPage({ user }: { user: FirebaseUser | null }) {
           </p>
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
             <Link 
-              to="/ai-builder" 
+              to="/builder" 
               className="bg-button-gradient text-white px-10 py-5 rounded-2xl text-lg font-black flex items-center gap-3 hover:scale-105 transition-all magic-button-glow"
             >
               <Sparkles className="w-6 h-6" />
               Magic AI Builder
             </Link>
             <Link 
-              to={user ? "/dashboard" : "/login"} 
+              to="/builder" 
               className="bg-brand-dark text-white px-10 py-5 rounded-2xl text-lg font-black flex items-center gap-3 hover:scale-105 transition-all shadow-xl shadow-slate-900/20"
             >
               <FileText className="w-6 h-6" />
@@ -288,7 +288,7 @@ export default function LandingPage({ user }: { user: FirebaseUser | null }) {
             Join thousands of professionals who have successfully built their ATS-friendly resumes with ChatCV. It's free, fast, and secure.
           </p>
           <button 
-            onClick={() => navigate(user ? '/dashboard' : '/login')}
+            onClick={() => navigate(user ? '/dashboard' : '/builder')}
             className="px-10 py-5 bg-white text-blue-700 font-bold rounded-full text-lg hover:bg-gray-50 hover:scale-105 transition-all duration-300 shadow-xl flex items-center gap-2"
           >
             <span className="whitespace-nowrap">Get Started for Free</span>
