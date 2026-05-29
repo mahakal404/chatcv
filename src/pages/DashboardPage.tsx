@@ -215,11 +215,11 @@ export default function DashboardPage({ user }: { user: User }) {
 
               {/* Copy */}
               <h3 className="text-xl font-extrabold text-slate-900 mb-2 text-center">
-                ⚠️ लॉगआउट करना चाहते हैं?
+                ⚠️ Sign Out?
               </h3>
               <p className="text-slate-500 mb-8 text-sm text-center leading-relaxed">
-                क्या आप सच में लॉगआउट होना चाहते हैं? अगर आपने अपना काम सेव नहीं किया है,<br />
-                तो आपकी डिटेल्स गायब हो सकती हैं।
+                Are you sure you want to sign out?<br />
+                Any unsaved work in the builder may be lost.
               </p>
 
               {/* Actions */}
@@ -229,14 +229,14 @@ export default function DashboardPage({ user }: { user: User }) {
                   onClick={handleLogoutCancel}
                   className="flex-1 px-6 py-3 rounded-xl font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-all"
                 >
-                  नहीं, रुकें
+                  Cancel
                 </button>
                 <button
                   id="logout-confirm-btn"
                   onClick={handleSignOut}
                   className="flex-1 px-6 py-3 rounded-xl font-bold bg-red-600 text-white hover:bg-red-700 shadow-lg shadow-red-600/20 transition-all"
                 >
-                  हाँ, लॉगआउट करें
+                  Yes, Sign Out
                 </button>
               </div>
             </motion.div>

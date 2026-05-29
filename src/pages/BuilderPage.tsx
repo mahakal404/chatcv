@@ -544,7 +544,7 @@ export default function BuilderPage({ user }: { user: User | null }) {
           {/* ── Premium Token Box ── logged-in only ───────────── */}
           {!isGuest && profile && (
             <div
-              className={`hidden sm:flex items-center gap-2.5 px-4 py-2 rounded-xl border shadow-lg transition-all cursor-default select-none ${
+              className={`flex items-center gap-1.5 sm:gap-2.5 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl border shadow-lg transition-all cursor-default select-none ${
                 tokens === 0
                   ? 'bg-gradient-to-r from-red-500 to-rose-600 border-red-400/40'
                   : tokens <= 2
@@ -556,14 +556,14 @@ export default function BuilderPage({ user }: { user: User | null }) {
               {/* Animated coin icon */}
               <div className="relative flex-shrink-0">
                 <Coins
-                  className="w-5 h-5 text-yellow-300 drop-shadow-sm"
+                  className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-300 drop-shadow-sm"
                   style={{ animation: 'spin 4s linear infinite' }}
                 />
               </div>
               <div className="flex flex-col leading-tight">
-                <span className="text-[9px] font-bold text-white/70 uppercase tracking-widest">Available Balance</span>
-                <span className="text-sm font-extrabold text-white">
-                  {tokens} {tokens === 1 ? 'Token' : 'Tokens'} 🪙
+                <span className="text-[7px] sm:text-[9px] font-bold text-white/70 uppercase tracking-widest">Balance</span>
+                <span className="text-[11px] sm:text-sm font-extrabold text-white leading-none">
+                  {tokens} 🪙
                 </span>
               </div>
             </div>
