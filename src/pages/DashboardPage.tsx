@@ -71,6 +71,7 @@ export default function DashboardPage({ user }: { user: User }) {
     id: '',
     title: ''
   });
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -129,6 +130,9 @@ export default function DashboardPage({ user }: { user: User }) {
     navigate('/');
   };
 
+  const handleLogoutRequest = () => setShowLogoutModal(true);
+  const handleLogoutCancel = () => setShowLogoutModal(false);
+
   const handleRenameStart = (e: React.MouseEvent, id: string, currentTitle: string) => {
     e.preventDefault();
     e.stopPropagation();
@@ -185,6 +189,60 @@ export default function DashboardPage({ user }: { user: User }) {
         onConfirm={confirmDelete}
         title={deleteModal.title}
       />
+
+      {/* ─── Logout Confirmation Modal ────────────────────────────── */}
+      <AnimatePresence>
+        {showLogoutModal && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={handleLogoutCancel}
+              className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+              className="relative bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl"
+            >
+              {/* Icon */}
+              <div className="w-14 h-14 rounded-2xl bg-amber-100 flex items-center justify-center mb-5 mx-auto">
+                <LogOut className="text-amber-600 w-7 h-7" />
+              </div>
+
+              {/* Copy */}
+              <h3 className="text-xl font-extrabold text-slate-900 mb-2 text-center">
+                ⚠️ लॉगआउट करना चाहते हैं?
+              </h3>
+              <p className="text-slate-500 mb-8 text-sm text-center leading-relaxed">
+                क्या आप सच में लॉगआउट होना चाहते हैं? अगर आपने अपना काम सेव नहीं किया है,<br />
+                तो आपकी डिटेल्स गायब हो सकती हैं।
+              </p>
+
+              {/* Actions */}
+              <div className="flex gap-3">
+                <button
+                  id="logout-cancel-btn"
+                  onClick={handleLogoutCancel}
+                  className="flex-1 px-6 py-3 rounded-xl font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-all"
+                >
+                  नहीं, रुकें
+                </button>
+                <button
+                  id="logout-confirm-btn"
+                  onClick={handleSignOut}
+                  className="flex-1 px-6 py-3 rounded-xl font-bold bg-red-600 text-white hover:bg-red-700 shadow-lg shadow-red-600/20 transition-all"
+                >
+                  हाँ, लॉगआउट करें
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
       {/* Header */}
       <header className="bg-white border-b border-slate-200 px-8 py-4 flex items-center justify-between sticky top-0 z-50">
         <Link to="/" className="flex items-center flex-shrink-0 hover:opacity-90 transition-opacity">
@@ -204,7 +262,7 @@ export default function DashboardPage({ user }: { user: User }) {
               </div>
             )}
           </div>
-          <button onClick={handleSignOut} className="text-slate-500 hover:text-red-600 transition-all">
+          <button onClick={handleLogoutRequest} className="text-slate-500 hover:text-red-600 transition-all" title="Logout">
             <LogOut className="w-5 h-5" />
           </button>
         </div>

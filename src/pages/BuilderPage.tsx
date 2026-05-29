@@ -541,20 +541,31 @@ export default function BuilderPage({ user }: { user: User | null }) {
         </div>
 
         <div className="flex items-center gap-2 sm:gap-4">
-          {/* Token Badge — logged-in only */}
+          {/* ── Premium Token Box ── logged-in only ───────────── */}
           {!isGuest && profile && (
             <div
-              className={`hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all ${
+              className={`hidden sm:flex items-center gap-2.5 px-4 py-2 rounded-xl border shadow-lg transition-all cursor-default select-none ${
                 tokens === 0
-                  ? 'bg-red-50 border-red-200 text-red-600'
+                  ? 'bg-gradient-to-r from-red-500 to-rose-600 border-red-400/40'
                   : tokens <= 2
-                  ? 'bg-amber-50 border-amber-200 text-amber-700'
-                  : 'bg-emerald-50 border-emerald-200 text-emerald-700'
-              }`}
+                  ? 'bg-gradient-to-r from-amber-500 to-orange-500 border-amber-400/40'
+                  : 'bg-gradient-to-r from-indigo-600 to-violet-600 border-indigo-400/40'
+              } shadow-indigo-200`}
               title="Tokens are used for PDF downloads. Watch an ad to earn more."
             >
-              <Coins className="w-3.5 h-3.5" />
-              <span>{tokens} Token{tokens !== 1 ? 's' : ''}</span>
+              {/* Animated coin icon */}
+              <div className="relative flex-shrink-0">
+                <Coins
+                  className="w-5 h-5 text-yellow-300 drop-shadow-sm"
+                  style={{ animation: 'spin 4s linear infinite' }}
+                />
+              </div>
+              <div className="flex flex-col leading-tight">
+                <span className="text-[9px] font-bold text-white/70 uppercase tracking-widest">Available Balance</span>
+                <span className="text-sm font-extrabold text-white">
+                  {tokens} {tokens === 1 ? 'Token' : 'Tokens'} 🪙
+                </span>
+              </div>
             </div>
           )}
 
@@ -633,6 +644,7 @@ export default function BuilderPage({ user }: { user: User | null }) {
               </div>
               
               <div className="grid grid-cols-3 gap-4 mb-8">
+                {/* Themes are fully guest-accessible — no auth guard ✓ */}
                 {['classic', 'modern', 'creative', 'tech'].map((t) => (
                   <button
                     key={t}
