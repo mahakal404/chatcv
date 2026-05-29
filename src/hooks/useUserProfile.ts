@@ -62,16 +62,7 @@ export function useUserProfile(user: User | null) {
       if (snap.exists()) {
         const data = snap.data() as UserProfile;
         setProfile(data);
-        
-        // Handle incoming gift notification
-        if (data.pendingGift) {
-          toast.success(data.pendingGift.message, { 
-            duration: 6000,
-            icon: '🎁'
-          });
-          // Clear the gift field so it doesn't show again
-          updateDoc(ref, { pendingGift: deleteField() }).catch(console.error);
-        }
+        // Removed automatic toast notification. Handled in ClaimGiftModal.
       }
       setProfileLoading(false);
     });

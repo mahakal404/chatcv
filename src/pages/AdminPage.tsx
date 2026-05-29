@@ -42,7 +42,6 @@ export default function AdminPage({ user }: { user: User | null }) {
     try {
       const ref = doc(db, 'users', targetUser.uid);
       await updateDoc(ref, {
-        tokens: increment(giftAmount),
         pendingGift: {
           amount: giftAmount,
           message: `Admin has gifted you ${giftAmount} tokens! 🎉`

@@ -10,6 +10,7 @@ import BuilderPage from './pages/BuilderPage';
 import AIBuilderPage from './pages/AIBuilderPage';
 import AIAssistantPage from './pages/AIAssistantPage';
 import AdminPage from './pages/AdminPage';
+import ClaimGiftModal from './components/ClaimGiftModal';
 
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
@@ -34,6 +35,7 @@ export default function App() {
   return (
     <Router>
       <Toaster position="top-center" richColors />
+      <ClaimGiftModal user={user} />
       <Routes>
         <Route path="/" element={<LandingPage user={user} />} />
         <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <LoginPage />} />
