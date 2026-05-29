@@ -3,13 +3,16 @@ import { User } from 'firebase/auth';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { db } from '../firebase';
 import { doc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
-import { ChevronLeft, Save, Download, Layout, Palette, Eye, Edit3, Sparkles, Loader2, ZoomIn, ZoomOut, RotateCcw, CheckCircle2, CloudOff, Cloud, Pencil, RefreshCw, AlertTriangle } from 'lucide-react';
+import { ChevronLeft, Save, Download, Layout, Palette, Eye, Edit3, Sparkles, Loader2, ZoomIn, ZoomOut, RotateCcw, CheckCircle2, Cloud, Pencil, RefreshCw, AlertTriangle, LogIn } from 'lucide-react';
 import { toast } from 'sonner';
 import { handleFirestoreError, OperationType } from '../lib/firestore-errors';
 import { ResumeData, Resume } from '../types';
 import ResumeForm from '../components/ResumeForm';
 import AIChatbot from '../components/AIChatbot';
 import { GoogleGenAI, ThinkingLevel } from '@google/genai';
+
+// ─── Guest LocalStorage Key ───────────────────────────────────
+const GUEST_DATA_KEY = 'chatcv_guest_data';
 
 import { PDFDownloadLink, BlobProvider } from '@react-pdf/renderer';
 import ClassicTemplatePDF from '../components/templates/ClassicTemplatePDF';
@@ -197,9 +200,10 @@ const INITIAL_DATA: ResumeData = {
   customSections: []
 };
 
-export default function BuilderPage({ user }: { user: User }) {
+export default function BuilderPage({ user }: { user: User | null }) {
   const { id } = useParams();
   const navigate = useNavigate();
+  const isGuest = !user;
   const [resume, setResume] = useState<Resume | null>(null);
   const [data, setData] = useState<ResumeData>(INITIAL_DATA);
   const [loading, setLoading] = useState(true);
@@ -212,8 +216,10 @@ export default function BuilderPage({ user }: { user: User }) {
   const isInitialLoad = useRef(true);
 
 
-  // ─── LocalStorage Auto-Save Key ──────────────────────────────
-  const draftKey = id ? `chatCV_draft_${id}` : null;
+  // ─── LocalStorage Keys ────────────────────────────────────────
+  // Authenticated users: per-resume draft key (pre-existing behaviour)
+  // Guest users: shared guest key (chatcv_guest_data)
+  const draftKey = isGuest ? GUEST_DATA_KEY : (id ? `chatCV_draft_${id}` : null);
 
   // ─── Fix 2: Master Debounce (1s delay + Deep Clone) ───────────
   // Deep-cloning breaks object reference equality so React-PDF
@@ -244,11 +250,65 @@ export default function BuilderPage({ user }: { user: User }) {
     return () => clearTimeout(timer);
   }, [data, draftKey]);
 
+  // ─── Guest: Load chatcv_guest_data on mount ───────────────────
+  useEffect(() => {
+    if (!isGuest) return; // authenticated flow handled below
+    try {
+      const saved = localStorage.getItem(GUEST_DATA_KEY);
+      if (saved) {
+        const { _savedAt, ...guestData } = JSON.parse(saved);
+        setData(guestData);
+        setDebouncedData(guestData);
+        toast.info('Welcome back! Your previous work has been restored.', { duration: 4000 });
+      }
+    } catch {
+      localStorage.removeItem(GUEST_DATA_KEY);
+    }
+    setIsDataReady(true);
+    setLoading(false);
+    setTimeout(() => { isInitialLoad.current = false; }, 2000);
+  }, [isGuest]);
+
+  // ─── Guest: beforeunload warning ──────────────────────────────
+  useEffect(() => {
+    if (!isGuest) return;
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      const msg = 'आप बिना login किए अपना resume save नहीं करेंगे तो सारी details gayb ho jaye gi. क\'या आप sure हैं?';
+      e.preventDefault();
+      e.returnValue = msg; // Required for Chrome/Edge
+      return msg;
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [isGuest]);
+
+  // ─── Sync guest data to Firestore once user logs in ───────────
+  useEffect(() => {
+    if (!user) return; // still a guest
+    const guestRaw = localStorage.getItem(GUEST_DATA_KEY);
+    if (!guestRaw) return;
+    try {
+      const { _savedAt, ...guestData } = JSON.parse(guestRaw);
+      // Only sync if the user just arrived at /builder without an id (fresh builder)
+      if (!id) {
+        // Apply guest data to form so they see their work
+        setData(guestData);
+        setDebouncedData(guestData);
+        toast.success('Your guest draft has been loaded! Save it to your account.', { duration: 5000 });
+      }
+      // Clear guest data now that user is authenticated
+      localStorage.removeItem(GUEST_DATA_KEY);
+    } catch {
+      localStorage.removeItem(GUEST_DATA_KEY);
+    }
+  }, [user]);
+
 
 
   // ─── Load from Firestore, then check for newer local draft ───
+  // Only runs for authenticated users with a resume ID
   useEffect(() => {
-    if (!id) return;
+    if (!id || !user) return; // guest flow handled in the effect above
     const fetchResume = async () => {
       try {
         const docSnap = await getDoc(doc(db, 'resumes', id));
@@ -261,7 +321,8 @@ export default function BuilderPage({ user }: { user: User }) {
           setResume({ id: docSnap.id, ...resumeData });
           
           // Check for a local draft
-          const localDraft = draftKey ? localStorage.getItem(draftKey) : null;
+          const perResumeDraftKey = `chatCV_draft_${id}`;
+          const localDraft = localStorage.getItem(perResumeDraftKey);
           if (localDraft) {
             try {
               const parsed = JSON.parse(localDraft);
@@ -284,7 +345,7 @@ export default function BuilderPage({ user }: { user: User }) {
               }
             } catch {
               // Invalid JSON in localStorage, ignore
-              if (draftKey) localStorage.removeItem(draftKey);
+              localStorage.removeItem(perResumeDraftKey);
             }
           }
 
@@ -303,13 +364,19 @@ export default function BuilderPage({ user }: { user: User }) {
       }
     };
     fetchResume();
-  }, [id, user.uid, navigate, draftKey]);
+  }, [id, user, navigate]);
 
   // ─── Live Magic ───────────────────────────────────────────────
   // Save-status + auto-save are now handled inside the Master
   // Debounce effect above (Fix 2). No separate effects needed.
 
   const handleSave = async () => {
+    if (isGuest) {
+      // Guest: redirect to login with a hint
+      toast.info('Please sign in to save your resume to the cloud!', { duration: 4000 });
+      navigate('/login');
+      return;
+    }
     if (!id || !user) return;
     setSaving(true);
     const path = `resumes/${id}`;
@@ -320,7 +387,8 @@ export default function BuilderPage({ user }: { user: User }) {
         lastModified: serverTimestamp()
       });
       // Clear local draft after successful cloud save
-      if (draftKey) localStorage.removeItem(draftKey);
+      const perResumeDraftKey = `chatCV_draft_${id}`;
+      localStorage.removeItem(perResumeDraftKey);
       setSaveStatus('✅ Saved');
       toast.success("Resume saved to cloud!");
     } catch (err) {
@@ -368,7 +436,7 @@ export default function BuilderPage({ user }: { user: User }) {
       {/* Action Bar */}
       <header className="bg-white border-b border-slate-200 px-4 sm:px-8 py-3 flex items-center justify-between z-50 shadow-sm">
         <div className="flex items-center gap-4">
-          <Link to="/dashboard" className="p-2 hover:bg-slate-100 rounded-lg transition-all text-slate-500">
+          <Link to={isGuest ? '/' : '/dashboard'} className="p-2 hover:bg-slate-100 rounded-lg transition-all text-slate-500">
             <ChevronLeft className="w-5 h-5" />
           </Link>
           <Link to="/" className="flex items-center flex-shrink-0 hover:opacity-90 transition-opacity">
@@ -407,6 +475,17 @@ export default function BuilderPage({ user }: { user: User }) {
         </div>
 
         <div className="flex items-center gap-2 sm:gap-4">
+          {/* Guest Banner */}
+          {isGuest && (
+            <Link
+              to="/login"
+              className="hidden sm:flex items-center gap-2 bg-amber-50 border border-amber-200 text-amber-700 px-3 py-1.5 rounded-xl text-xs font-bold hover:bg-amber-100 transition-all"
+            >
+              <LogIn className="w-3.5 h-3.5" />
+              Sign in to save
+            </Link>
+          )}
+
           <div className="flex bg-slate-100 p-1 rounded-xl sm:hidden">
             <button
               onClick={() => setViewMode('edit')}
@@ -425,10 +504,14 @@ export default function BuilderPage({ user }: { user: User }) {
           <button
             onClick={handleSave}
             disabled={saving}
-            className="flex items-center gap-2 bg-white border border-slate-200 text-slate-700 px-4 py-2 rounded-xl font-bold hover:bg-slate-50 transition-all disabled:opacity-50"
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bold transition-all disabled:opacity-50 ${
+              isGuest
+                ? 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg shadow-indigo-100'
+                : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
+            }`}
           >
-            {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-            <span className="hidden sm:inline">Save</span>
+            {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : isGuest ? <LogIn className="w-4 h-4" /> : <Save className="w-4 h-4" />}
+            <span className="hidden sm:inline">{isGuest ? 'Login to Save' : 'Save'}</span>
           </button>
           <PDFDownloadLink
             document={<ClassicTemplatePDF data={data} />}

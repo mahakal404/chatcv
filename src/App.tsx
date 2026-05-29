@@ -37,7 +37,7 @@ export default function App() {
         <Route path="/" element={<LandingPage user={user} />} />
         <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <LoginPage />} />
         <Route path="/dashboard" element={user ? <DashboardPage user={user} /> : <Navigate to="/login" />} />
-        <Route path="/builder/:id?" element={user ? <BuilderPage user={user} /> : <Navigate to="/login" />} />
+        <Route path="/builder/:id?" element={<BuilderPage user={user} />} />
         <Route path="/ai-builder" element={user ? <AIBuilderPage user={user} /> : <Navigate to="/login" />} />
         <Route path="/ai-assistant" element={user ? <AIAssistantPage user={user} /> : <Navigate to="/login" />} />
       </Routes>
