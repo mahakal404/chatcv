@@ -263,6 +263,16 @@ export default function DashboardPage({ user }: { user: User }) {
               </div>
             )}
           </div>
+          {user?.email === 'rc6542698@gmail.com' && (
+            <Link 
+              to="/admin" 
+              className="border border-indigo-500/30 bg-indigo-500/10 text-indigo-600 hover:bg-indigo-500/20 px-3 py-2 sm:px-4 sm:py-2 rounded-xl transition-all font-medium text-sm flex items-center gap-1.5 sm:gap-2"
+              title="Admin Panel"
+            >
+              <span className="text-base sm:text-sm leading-none">👑</span>
+              <span className="hidden sm:inline">Admin Panel</span>
+            </Link>
+          )}
           <TokenBox user={user} />
           <button onClick={handleLogoutRequest} className="text-slate-500 hover:text-red-600 transition-all" title="Logout">
             <LogOut className="w-5 h-5" />
