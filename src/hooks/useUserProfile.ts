@@ -36,26 +36,26 @@ export function useUserProfile(user: User | null) {
 
     const ref = doc(db, 'users', user.uid);
 
-    // Create profile doc if it doesn't exist yet (first login)
-    setDoc(
-      ref,
-      {
-        uid: user.uid,
-        email: user.email ?? '',
-        displayName: user.displayName ?? '',
-        // tokens field is only written when the document is NEW
-        // thanks to the guard inside setDoc merge + server-side rule.
-        // We use a client-side workaround: we set tokens only when missing.
-      },
-      { merge: true }
-    ).then(async () => {
-      // After the merge, check if tokens field exists; if not, initialise to 5
-      const { getDoc } = await import('firebase/firestore');
+    const ensureUserProfile = async () => {
+      const { getDoc, setDoc, updateDoc } = await import('firebase/firestore');
       const snap = await getDoc(ref);
-      if (snap.exists() && snap.data().tokens === undefined) {
-        await updateDoc(ref, { tokens: 5 });
+      
+      if (!snap.exists()) {
+        await setDoc(ref, {
+          uid: user.uid,
+          email: user.email ?? '',
+          displayName: user.displayName ?? '',
+          tokens: 5,
+        });
+      } else {
+        const data = snap.data();
+        if (data.tokens === undefined) {
+          await updateDoc(ref, { tokens: 5 });
+        }
       }
-    }).catch(console.error);
+    };
+
+    ensureUserProfile().catch(console.error);
 
     // Real-time listener
     const unsub = onSnapshot(ref, (snap) => {
