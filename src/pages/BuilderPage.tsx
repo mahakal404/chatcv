@@ -13,7 +13,6 @@ import { GoogleGenAI, ThinkingLevel } from '@google/genai';
 import { useUserProfile } from '../hooks/useUserProfile';
 import TokenBox from '../components/TokenBox';
 import TechTemplate from '../components/templates/TechTemplate';
-import ClassicTemplatePDF from '../components/templates/ClassicTemplatePDF';
 import { pdf } from '@react-pdf/renderer';
 import EarnTokenModal from '../components/EarnTokenModal';
 import { motion, AnimatePresence } from 'motion/react';
