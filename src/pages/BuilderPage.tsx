@@ -13,6 +13,7 @@ import { GoogleGenAI, ThinkingLevel } from '@google/genai';
 import { useUserProfile } from '../hooks/useUserProfile';
 import TokenBox from '../components/TokenBox';
 import EarnTokenModal from '../components/EarnTokenModal';
+import { motion, AnimatePresence } from 'motion/react';
 
 // ─── Guest LocalStorage Key ───────────────────────────────────
 const GUEST_DATA_KEY = 'chatcv_guest_data';
@@ -613,6 +614,57 @@ export default function BuilderPage({ user }: { user: User | null }) {
                   </button>
                 ))}
               </div>
+
+              <AnimatePresence>
+                {data.theme === 'classic' && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10, height: 0 }}
+                    animate={{ opacity: 1, y: 0, height: 'auto' }}
+                    exit={{ opacity: 0, y: -10, height: 0 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="mb-8 p-4 bg-indigo-50/50 border border-indigo-100 rounded-xl shadow-sm">
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <div className="flex-1">
+                          <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2">
+                            Premium Vector Icons
+                          </h3>
+                          <p className="text-xs text-slate-500 mt-1">Enhance your Classic template with professional, high-res icons.</p>
+                        </div>
+                        
+                        <div className="flex flex-col gap-3 w-full sm:w-auto">
+                          <div className="flex items-center justify-between sm:justify-end gap-3 bg-white px-3 py-2 rounded-lg border border-slate-200">
+                            <label className="text-[10px] font-black text-slate-600 uppercase tracking-wider cursor-pointer">
+                              👁️ Preview (Free)
+                            </label>
+                            <button
+                              onClick={() => setData({ ...data, previewPremiumIcons: !data.previewPremiumIcons })}
+                              className={`w-10 h-5 rounded-full transition-all relative shrink-0 ${data.previewPremiumIcons ? 'bg-indigo-600' : 'bg-slate-300'}`}
+                            >
+                              <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full transition-all shadow-sm ${data.previewPremiumIcons ? 'left-5' : 'left-0.5'}`} />
+                            </button>
+                          </div>
+
+                          {data.hasUnlockedClassicIcons ? (
+                            <div className="flex items-center justify-center gap-2 text-emerald-600 bg-emerald-50 border border-emerald-100 px-4 py-2 rounded-lg text-xs font-bold w-full sm:w-auto">
+                              <span>✅ Premium Icons Unlocked!</span>
+                            </div>
+                          ) : (
+                            <button
+                              onClick={handleUnlockClassicIcons}
+                              className="relative overflow-hidden group bg-slate-900 text-white px-4 py-2.5 rounded-lg font-bold flex items-center justify-center gap-2 transition-all hover:shadow-lg hover:shadow-indigo-500/30 w-full sm:w-auto"
+                            >
+                              <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/0 via-indigo-500/30 to-indigo-500/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                              <span className="text-sm">💎</span>
+                              <span className="text-xs whitespace-nowrap">Apply Icons (Cost: 1 Token)</span>
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               <div className="flex flex-col gap-6">
                 <div className="flex flex-col gap-4">
