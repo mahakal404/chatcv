@@ -12,6 +12,9 @@ import AIChatbot from '../components/AIChatbot';
 import { GoogleGenAI, ThinkingLevel } from '@google/genai';
 import { useUserProfile } from '../hooks/useUserProfile';
 import TokenBox from '../components/TokenBox';
+import TechTemplate from '../components/templates/TechTemplate';
+import ClassicTemplatePDF from '../components/templates/ClassicTemplatePDF';
+import { pdf } from '@react-pdf/renderer';
 import EarnTokenModal from '../components/EarnTokenModal';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -436,22 +439,20 @@ export default function BuilderPage({ user }: { user: User | null }) {
     try {
       const remaining = await deductToken(1);
       toast.success(`1 Token deducted. Remaining: ${remaining} 🪙`, { duration: 3000 });
-      // Trigger download using the cached blob URL
-      if (pdfBlobUrlRef.current) {
-        const a = document.createElement('a');
-        a.href = pdfBlobUrlRef.current;
-        a.download = `${data.personalInfo.fullName || 'Resume'}.pdf`;
-        a.click();
-      } else {
-        toast.info('PDF is still generating, please try again in a second.');
-        // Refund since download didn't happen
-        await addToken(1);
-      }
+      // Generate a fresh PDF explicitly without the preview flag to secure premium features
+      toast.info('Generating final PDF...', { duration: 2000 });
+      const blob = await pdf(<ClassicTemplatePDF data={debouncedData} isPreview={false} />).toBlob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${data.personalInfo.fullName || 'Resume'}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
     } catch (err) {
       console.error('Download error:', err);
       toast.error('Download failed. Token was not deducted.');
     }
-  }, [isGuest, tokens, deductToken, addToken, data.personalInfo.fullName, navigate]);
+  }, [isGuest, tokens, deductToken, addToken, data.personalInfo.fullName, debouncedData, navigate]);
 
 
   const handleUnlockClassicIcons = async () => {
@@ -736,7 +737,7 @@ export default function BuilderPage({ user }: { user: User | null }) {
               <p className="font-medium text-slate-600">Loading your draft...</p>
             </div>
           ) : (
-            <BlobProvider document={<ClassicTemplatePDF data={debouncedData} />}>
+            <BlobProvider document={<ClassicTemplatePDF data={debouncedData} isPreview={true} />}>
             {({ blob, url, loading, error }) => {
               // Keep ref in sync so gated download handler can always access latest URL
               if (url) pdfBlobUrlRef.current = url;

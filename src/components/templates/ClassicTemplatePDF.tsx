@@ -19,6 +19,7 @@ Font.registerHyphenationCallback(word => [word]);
 
 interface Props {
   data: ResumeData;
+  isPreview?: boolean;
 }
 
 // ─── HIGH-LEVEL SVG ICONS ────────────────────────
@@ -214,7 +215,7 @@ const SectionHeader = ({ icon, title, color }: { icon: React.ReactNode, title: s
 // ═══════════════════════════════════════════════════════════════════════
 //  CLASSIC THEME
 // ═══════════════════════════════════════════════════════════════════════
-const ClassicTheme = ({ data }: Props) => {
+const ClassicTheme = ({ data, isPreview = false }: Props) => {
   const { personalInfo, summary, experience, education, certifications, skills, languages, projects, customSections, accentColor, skillDisplayStyle, languageDisplayStyle, profileImage, profileImageShape, showProfileImage, showSkillLevels, showLanguageLevels } = data;
   const ac = accentColor || '#4f46e5';
 
@@ -235,7 +236,7 @@ const ClassicTheme = ({ data }: Props) => {
     gridItem: { width: '48%', marginRight: '1%', marginBottom: 6, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 4, paddingHorizontal: 6, backgroundColor: '#f8fafc', borderRadius: 4 },
   });
 
-  const showIcons = data.hasUnlockedClassicIcons || data.previewPremiumIcons;
+  const showIcons = isPreview ? (data.hasUnlockedClassicIcons || data.previewPremiumIcons) : !!data.hasUnlockedClassicIcons;
 
   const renderTitle = (title: string, iconFn: any) => {
     if (showIcons) {
@@ -876,7 +877,7 @@ const TechTheme = ({ data }: Props) => {
   );
 };
 
-const ClassicTemplatePDF = ({ data }: Props) => {
+const ClassicTemplatePDF = ({ data, isPreview = false }: Props) => {
   const theme = data.theme || 'classic';
 
   return (
@@ -884,7 +885,7 @@ const ClassicTemplatePDF = ({ data }: Props) => {
       {theme === 'modern' && <ModernTheme data={data} />}
       {theme === 'creative' && <CreativeTheme data={data} />}
       {theme === 'tech' && <TechTheme data={data} />}
-      {(theme === 'classic' || !['modern', 'creative', 'tech'].includes(theme)) && <ClassicTheme data={data} />}
+      {(theme === 'classic' || !['modern', 'creative', 'tech'].includes(theme)) && <ClassicTheme data={data} isPreview={isPreview} />}
     </Document>
   );
 };
