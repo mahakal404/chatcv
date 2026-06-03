@@ -653,8 +653,8 @@ export default function BuilderPage({ user }: { user: User | null }) {
                         
                         <div className="flex flex-col gap-3 w-full sm:w-auto">
                           <div className="flex items-center justify-between sm:justify-end gap-3 bg-white px-3 py-2 rounded-lg border border-slate-200">
-                            <label className="text-[10px] font-black text-slate-600 uppercase tracking-wider cursor-pointer">
-                              👁️ Preview (Free)
+                            <label className="text-[10px] font-black text-slate-600 uppercase tracking-wider flex items-center cursor-pointer">
+                              <Eye size={16} className="text-gray-600 mr-2" /> Preview (Free)
                             </label>
                             <button
                               onClick={() => setData({ ...data, previewPremiumIcons: !data.previewPremiumIcons })}

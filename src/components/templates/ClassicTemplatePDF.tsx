@@ -235,8 +235,10 @@ const ClassicTheme = ({ data }: Props) => {
     gridItem: { width: '48%', marginRight: '1%', marginBottom: 6, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 4, paddingHorizontal: 6, backgroundColor: '#f8fafc', borderRadius: 4 },
   });
 
+  const showIcons = data.hasUnlockedClassicIcons || data.previewPremiumIcons;
+
   const renderTitle = (title: string, iconFn: any) => {
-    if (data.hasUnlockedClassicIcons) {
+    if (showIcons) {
       return (
         <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10, marginTop: 14, borderBottomWidth: 1, borderBottomColor: ac, paddingBottom: 3 }}>
           <View style={{ marginRight: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
