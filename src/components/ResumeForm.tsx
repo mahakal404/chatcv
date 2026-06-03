@@ -734,19 +734,30 @@ export default function ResumeForm({ data, setData, onAIImprove }: ResumeFormPro
             <Code className="text-indigo-600 w-5 h-5" />
             <span className="font-bold text-slate-900 uppercase tracking-wider text-sm">Skills & Display</span>
           </div>
-          <div className="flex items-center gap-2">
-            <label className="text-[10px] font-black text-slate-400 uppercase">Style:</label>
-            <select
-              value={data.skillDisplayStyle || 'text'}
-              onChange={(e) => setData({ ...data, skillDisplayStyle: e.target.value as any })}
-              className="bg-white border border-slate-200 rounded-lg px-2 py-1 text-xs font-bold text-slate-600 focus:outline-none cursor-pointer"
-            >
-              <option value="text">Text Only</option>
-              <option value="stars">Stars</option>
-              <option value="dots">Dots</option>
-              <option value="bar">Progress Bar</option>
-              <option value="circle">Circular Ring</option>
-            </select>
+          <div className="flex flex-wrap items-center justify-end gap-4">
+            <div className="flex items-center gap-2">
+              <label className="text-[10px] font-black text-slate-400 uppercase">Show Levels:</label>
+              <button
+                onClick={(e) => { e.stopPropagation(); setData({ ...data, showSkillLevels: data.showSkillLevels === false ? true : false }); }}
+                className={`w-9 h-5 rounded-full transition-all relative ${data.showSkillLevels !== false ? 'bg-indigo-600' : 'bg-slate-300'}`}
+              >
+                <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full transition-all shadow-sm ${data.showSkillLevels !== false ? 'left-[18px]' : 'left-0.5'}`} />
+              </button>
+            </div>
+            <div className="flex items-center gap-2">
+              <label className="text-[10px] font-black text-slate-400 uppercase">Style:</label>
+              <select
+                value={data.skillDisplayStyle || 'text'}
+                onChange={(e) => setData({ ...data, skillDisplayStyle: e.target.value as any })}
+                className="bg-white border border-slate-200 rounded-lg px-2 py-1 text-xs font-bold text-slate-600 focus:outline-none cursor-pointer"
+              >
+                <option value="text">Text Only</option>
+                <option value="stars">Stars</option>
+                <option value="dots">Dots</option>
+                <option value="bar">Progress Bar</option>
+                <option value="circle">Circular Ring</option>
+              </select>
+            </div>
           </div>
         </div>
         <button
@@ -845,19 +856,30 @@ export default function ResumeForm({ data, setData, onAIImprove }: ResumeFormPro
             <Languages className="text-indigo-600 w-5 h-5" />
             <span className="font-bold text-slate-900 uppercase tracking-wider text-sm">Languages & Display</span>
           </div>
-          <div className="flex items-center gap-2">
-            <label className="text-[10px] font-black text-slate-400 uppercase">Style:</label>
-            <select
-              value={data.languageDisplayStyle || 'text'}
-              onChange={(e) => setData({ ...data, languageDisplayStyle: e.target.value as any })}
-              className="bg-white border border-slate-200 rounded-lg px-2 py-1 text-xs font-bold text-slate-600 focus:outline-none cursor-pointer"
-            >
-              <option value="text">Text Only</option>
-              <option value="stars">Stars</option>
-              <option value="dots">Dots</option>
-              <option value="bar">Progress Bar</option>
-              <option value="circle">Circular Ring</option>
-            </select>
+          <div className="flex flex-wrap items-center justify-end gap-4">
+            <div className="flex items-center gap-2">
+              <label className="text-[10px] font-black text-slate-400 uppercase">Show Levels:</label>
+              <button
+                onClick={(e) => { e.stopPropagation(); setData({ ...data, showLanguageLevels: data.showLanguageLevels === false ? true : false }); }}
+                className={`w-9 h-5 rounded-full transition-all relative ${data.showLanguageLevels !== false ? 'bg-indigo-600' : 'bg-slate-300'}`}
+              >
+                <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full transition-all shadow-sm ${data.showLanguageLevels !== false ? 'left-[18px]' : 'left-0.5'}`} />
+              </button>
+            </div>
+            <div className="flex items-center gap-2">
+              <label className="text-[10px] font-black text-slate-400 uppercase">Style:</label>
+              <select
+                value={data.languageDisplayStyle || 'text'}
+                onChange={(e) => setData({ ...data, languageDisplayStyle: e.target.value as any })}
+                className="bg-white border border-slate-200 rounded-lg px-2 py-1 text-xs font-bold text-slate-600 focus:outline-none cursor-pointer"
+              >
+                <option value="text">Text Only</option>
+                <option value="stars">Stars</option>
+                <option value="dots">Dots</option>
+                <option value="bar">Progress Bar</option>
+                <option value="circle">Circular Ring</option>
+              </select>
+            </div>
           </div>
         </div>
         <button

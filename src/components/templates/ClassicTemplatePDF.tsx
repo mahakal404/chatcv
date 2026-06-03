@@ -215,7 +215,7 @@ const SectionHeader = ({ icon, title, color }: { icon: React.ReactNode, title: s
 //  CLASSIC THEME
 // ═══════════════════════════════════════════════════════════════════════
 const ClassicTheme = ({ data }: Props) => {
-  const { personalInfo, summary, experience, education, certifications, skills, languages, projects, customSections, accentColor, skillDisplayStyle, languageDisplayStyle, profileImage, profileImageShape, showProfileImage } = data;
+  const { personalInfo, summary, experience, education, certifications, skills, languages, projects, customSections, accentColor, skillDisplayStyle, languageDisplayStyle, profileImage, profileImageShape, showProfileImage, showSkillLevels, showLanguageLevels } = data;
   const ac = accentColor || '#4f46e5';
 
   const s = StyleSheet.create({
@@ -309,7 +309,7 @@ const ClassicTheme = ({ data }: Props) => {
             {skills.map(skill => (
               <View key={skill.id} style={s.gridItem} wrap={false}>
                 <Text style={{ fontWeight: 600, fontSize: 9, color: '#334155' }}>{skill.name || ' '}</Text>
-                {proficiencyDisplay({ level: skill.level, type: 'skill', style: skillDisplayStyle, accentColor: ac })}
+                {showSkillLevels !== false && proficiencyDisplay({ level: skill.level, type: 'skill', style: skillDisplayStyle, accentColor: ac })}
               </View>
             ))}
           </View>
@@ -353,7 +353,7 @@ const ClassicTheme = ({ data }: Props) => {
             {languages.map(lang => (
               <View key={lang.id} style={s.gridItem} wrap={false}>
                 <Text style={{ fontWeight: 600, fontSize: 9, color: '#334155' }}>{lang.name || ' '}</Text>
-                {proficiencyDisplay({ level: lang.proficiency, type: 'language', style: languageDisplayStyle, accentColor: ac })}
+                {showLanguageLevels !== false && proficiencyDisplay({ level: lang.proficiency, type: 'language', style: languageDisplayStyle, accentColor: ac })}
               </View>
             ))}
           </View>
@@ -374,7 +374,7 @@ const ClassicTheme = ({ data }: Props) => {
 //  MODERN THEME 
 // ═══════════════════════════════════════════════════════════════════════
 const ModernTheme = ({ data }: Props) => {
-  const { personalInfo, summary, experience, education, certifications, skills, languages, projects, customSections, accentColor, skillDisplayStyle, languageDisplayStyle, profileImage, profileImageShape, showProfileImage } = data;
+  const { personalInfo, summary, experience, education, certifications, skills, languages, projects, customSections, accentColor, skillDisplayStyle, languageDisplayStyle, profileImage, profileImageShape, showProfileImage, showSkillLevels, showLanguageLevels } = data;
   const ac = accentColor || '#4f46e5';
 
   return (
@@ -451,7 +451,7 @@ const ModernTheme = ({ data }: Props) => {
                   <View key={lang.id} style={{ marginBottom: 6, padding: 6, backgroundColor: '#f8fafc', borderRadius: 4, borderWidth: 1, borderColor: '#f1f5f9' }} wrap={false}>
                     <Text style={{ fontWeight: 600, fontSize: 9, color: '#0f172a', marginBottom: 3 }}>{lang.name || ' '}</Text>
                     <View style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
-                      {proficiencyDisplay({ level: lang.proficiency, type: 'language', style: languageDisplayStyle, accentColor: ac })}
+                      {showLanguageLevels !== false && proficiencyDisplay({ level: lang.proficiency, type: 'language', style: languageDisplayStyle, accentColor: ac })}
                     </View>
                   </View>
                 ))}
@@ -490,7 +490,7 @@ const ModernTheme = ({ data }: Props) => {
                 <View key={skill.id} style={{ marginBottom: 6, padding: 6, backgroundColor: '#f8fafc', borderRadius: 4, borderWidth: 1, borderColor: '#f1f5f9' }} wrap={false}>
                   <Text style={{ fontWeight: 600, fontSize: 9, color: '#0f172a', marginBottom: 3 }}>{skill.name || ' '}</Text>
                   <View style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
-                    {proficiencyDisplay({ level: skill.level, type: 'skill', style: skillDisplayStyle, accentColor: ac })}
+                    {showSkillLevels !== false && proficiencyDisplay({ level: skill.level, type: 'skill', style: skillDisplayStyle, accentColor: ac })}
                   </View>
                 </View>
               ))}
@@ -523,7 +523,7 @@ const ModernTheme = ({ data }: Props) => {
 //  CREATIVE THEME
 // ═══════════════════════════════════════════════════════════════════════
 const CreativeTheme = ({ data }: Props) => {
-  const { personalInfo, summary, experience, education, certifications, skills, languages, projects, customSections, accentColor, skillDisplayStyle, languageDisplayStyle, profileImage, profileImageShape, showProfileImage } = data;
+  const { personalInfo, summary, experience, education, certifications, skills, languages, projects, customSections, accentColor, skillDisplayStyle, languageDisplayStyle, profileImage, profileImageShape, showProfileImage, showSkillLevels, showLanguageLevels } = data;
   const ac = accentColor || '#4f46e5';
 
   return (
@@ -558,7 +558,7 @@ const CreativeTheme = ({ data }: Props) => {
               <View key={lang.id} style={{ marginBottom: 6, padding: 4, backgroundColor: 'rgba(0,0,0,0.1)', borderRadius: 4 }} wrap={false}>
                 <Text style={{ fontSize: 9, fontWeight: 600, color: '#ffffff', marginBottom: 2 }}>{lang.name || ' '}</Text>
                 <View style={{ flexDirection: 'row' }}>
-                  {proficiencyDisplay({ level: lang.proficiency, type: 'language', style: languageDisplayStyle, accentColor: ac, isSidebar: true })}
+                  {showLanguageLevels !== false && proficiencyDisplay({ level: lang.proficiency, type: 'language', style: languageDisplayStyle, accentColor: ac, isSidebar: true })}
                 </View>
               </View>
             ))}
@@ -618,7 +618,7 @@ const CreativeTheme = ({ data }: Props) => {
               {skills.map(skill => (
                 <View key={skill.id} style={{ width: '47%', marginBottom: 8 }} wrap={false}>
                   <Text style={{ fontWeight: 700, fontSize: 9, color: '#334155', marginBottom: 3 }}>{skill.name || ' '}</Text>
-                  {proficiencyDisplay({ level: skill.level, type: 'skill', style: skillDisplayStyle, accentColor: ac })}
+                  {showSkillLevels !== false && proficiencyDisplay({ level: skill.level, type: 'skill', style: skillDisplayStyle, accentColor: ac })}
                 </View>
               ))}
             </View>
@@ -663,7 +663,7 @@ const CreativeTheme = ({ data }: Props) => {
 //  TECH/DEV THEME (Adjusted to utilize full width and balance columns)
 // ═══════════════════════════════════════════════════════════════════════
 const TechTheme = ({ data }: Props) => {
-  const { personalInfo, summary, experience, education, certifications, skills, languages, projects, customSections, accentColor, skillDisplayStyle, languageDisplayStyle, profileImage, profileImageShape, showProfileImage } = data;
+  const { personalInfo, summary, experience, education, certifications, skills, languages, projects, customSections, accentColor, skillDisplayStyle, languageDisplayStyle, profileImage, profileImageShape, showProfileImage, showSkillLevels, showLanguageLevels } = data;
   const ac = accentColor || '#4f46e5';
 
   return (

@@ -199,7 +199,9 @@ const INITIAL_DATA: ResumeData = {
   theme: 'modern',
   accentColor: '#4f46e5',
   skillDisplayStyle: 'text',
+  showSkillLevels: true,
   languageDisplayStyle: 'text',
+  showLanguageLevels: true,
   customSections: []
 };
 

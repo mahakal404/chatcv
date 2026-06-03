@@ -529,7 +529,7 @@ const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(({ data, on
                       <div key={skill.id} className="block w-full" style={{ pageBreakInside: 'avoid', breakInside: 'avoid' }}>
                         <div className="flex items-center justify-between text-sm text-slate-700">
                           <span className="capitalize text-sm font-medium tracking-wider">{skill.name}</span>
-                          <ProficiencyDisplay level={skill.level} type="skill" />
+                          {data.showSkillLevels !== false && <ProficiencyDisplay level={skill.level} type="skill" />}
                         </div>
                       </div>
                     ))}
@@ -547,7 +547,7 @@ const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(({ data, on
                       <div key={lang.id} className="block w-full" style={{ pageBreakInside: 'avoid', breakInside: 'avoid' }}>
                         <div className="flex items-center justify-between text-sm text-slate-700">
                           <span className="capitalize text-sm font-medium tracking-wider">{lang.name}</span>
-                          <ProficiencyDisplay level={lang.proficiency} type="language" />
+                          {data.showLanguageLevels !== false && <ProficiencyDisplay level={lang.proficiency} type="language" />}
                         </div>
                       </div>
                     ))}
@@ -608,7 +608,7 @@ const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(({ data, on
                       <div key={lang.id} className="block w-full" style={{ pageBreakInside: 'avoid', breakInside: 'avoid' }}>
                         <div className="flex flex-row items-center justify-between w-full">
                           <span className="capitalize text-sm font-medium tracking-wider">{lang.name}</span>
-                          <ProficiencyDisplay level={lang.proficiency} type="language" isSidebar />
+                          {data.showLanguageLevels !== false && <ProficiencyDisplay level={lang.proficiency} type="language" isSidebar />}
                         </div>
                       </div>
                     ))}
@@ -738,7 +738,7 @@ const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(({ data, on
                     {skills.map((skill) => (
                       <div key={skill.id} className="block w-full" style={{ pageBreakInside: 'avoid', breakInside: 'avoid' }}>
                         <div className="text-xs font-semibold text-slate-700 capitalize mb-1">{skill.name}</div>
-                        <ProficiencyDisplay level={skill.level} type="skill" />
+                        {data.showSkillLevels !== false && <ProficiencyDisplay level={skill.level} type="skill" />}
                       </div>
                     ))}
                   </div>

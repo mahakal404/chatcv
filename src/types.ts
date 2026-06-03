@@ -81,7 +81,9 @@ export interface ResumeData {
   theme: 'classic' | 'modern' | 'creative' | 'tech';
   accentColor: string;
   skillDisplayStyle: 'text' | 'stars' | 'dots' | 'bar' | 'circle';
+  showSkillLevels?: boolean;
   languageDisplayStyle: 'text' | 'stars' | 'dots' | 'bar' | 'circle';
+  showLanguageLevels?: boolean;
 }
 
 export interface Resume {
