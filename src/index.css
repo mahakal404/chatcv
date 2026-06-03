@@ -166,3 +166,10 @@
     @apply bg-white/80 backdrop-blur-md border border-white/20 shadow-xl;
   }
 }
+
+@media print {
+  @page {
+    margin-top: 40px;
+    margin-bottom: 40px;
+  }
+}

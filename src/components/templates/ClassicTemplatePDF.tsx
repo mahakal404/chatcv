@@ -281,7 +281,7 @@ const ClassicTheme = ({ data, isPreview = false }: Props) => {
         <View>
           {renderTitle('Experience', briefcaseIcon)}
           {experience.map(exp => (
-            <View key={exp.id} style={s.itemWrap}>
+            <View key={exp.id} style={s.itemWrap} wrap={false}>
               <View style={s.itemHeader}>
                 <Text style={s.itemTitle}>{exp.role || ' '}</Text>
                 <Text style={s.date}>{exp.startDate}{exp.startDate && exp.endDate ? ' - ' : ''}{exp.endDate || 'Present'}</Text>
@@ -301,7 +301,7 @@ const ClassicTheme = ({ data, isPreview = false }: Props) => {
             const institution = getInstitutionText(edu);
             if (!degree && !institution) return null;
             return (
-              <View key={edu.id} style={s.itemWrap}>
+              <View key={edu.id} style={s.itemWrap} wrap={false}>
                 <View style={s.itemHeader}>
                   <Text style={s.itemTitle}>{degree || ' '}</Text>
                   <Text style={s.date}>{edu.startDate}{edu.startDate && edu.endDate ? ' - ' : ''}{edu.endDate}</Text>
@@ -337,7 +337,7 @@ const ClassicTheme = ({ data, isPreview = false }: Props) => {
         <View>
           {renderTitle('Projects', codeIcon)}
           {projects.map(p => (
-            <View key={p.id} style={s.itemWrap}>
+            <View key={p.id} style={s.itemWrap} wrap={false}>
               <View style={s.itemHeader}>
                 <Text style={s.itemTitle}>{p.title || ' '}</Text>
                 {p.link && <Link src={p.link}><Text style={{ fontSize: 7, color: ac }}>View Project</Text></Link>}
@@ -395,7 +395,7 @@ const ModernTheme = ({ data }: Props) => {
   const ac = accentColor || '#4f46e5';
 
   return (
-    <Page size="A4" style={{ fontFamily: 'Inter', fontSize: 9, color: '#334155', padding: 0, lineHeight: 1.4 }}>
+    <Page size="A4" style={{ fontFamily: 'Inter', fontSize: 9, color: '#334155', paddingTop: 40, paddingBottom: 40, paddingLeft: 0, paddingRight: 0, lineHeight: 1.4 }}>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', padding: 32, paddingBottom: 20 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, paddingRight: 10 }}>
           {showProfileImage && profileImage && (
@@ -427,7 +427,7 @@ const ModernTheme = ({ data }: Props) => {
             <View style={{ marginBottom: 18 }}>
               <SectionHeader icon={briefcaseIcon({ size: 10, color: ac })} title="Work Experience" color={ac} />
               {experience.map(exp => (
-                <View key={exp.id} style={{ marginBottom: 12 }}>
+                <View key={exp.id} style={{ marginBottom: 12 }} wrap={false}>
                   <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' }}>
                     <Text style={{ fontSize: 11, fontWeight: 700, color: '#0f172a' }}>{exp.role || ' '}</Text>
                     <Text style={{ fontSize: 7, fontWeight: 900, color: '#94a3b8', textTransform: 'uppercase' }}>{exp.startDate}{exp.endDate ? ` — ${exp.endDate}` : ''}</Text>
@@ -447,7 +447,7 @@ const ModernTheme = ({ data }: Props) => {
                 const institution = getInstitutionText(edu);
                 if (!degree && !institution) return null;
                 return (
-                  <View key={edu.id} style={{ marginBottom: 10 }} wrap={false}>
+                  <View key={edu.id} style={{ marginBottom: 12 }} wrap={false}>
                     <Text style={{ fontWeight: 700, fontSize: 10, color: '#0f172a' }}>{degree || ' '}</Text>
                     {institution ? <Text style={{ fontSize: 8, color: '#64748b', marginBottom: 2 }}>{institution || ' '}</Text> : null}
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -492,7 +492,7 @@ const ModernTheme = ({ data }: Props) => {
           )}
 
           {customSections && customSections.length > 0 && customSections.map(section => (
-            <View key={section.id} style={{ marginBottom: 18 }}>
+            <View key={section.id} style={{ marginBottom: 18 }} wrap={false}>
               <SectionHeader icon={awardIcon({ size: 10, color: ac })} title={section.title} color={ac} />
               <Text style={{ fontSize: 9, color: '#475569' }}>{section.content || ' '}</Text>
             </View>
@@ -544,7 +544,7 @@ const CreativeTheme = ({ data }: Props) => {
   const ac = accentColor || '#4f46e5';
 
   return (
-    <Page size="A4" style={{ fontFamily: 'Inter', fontSize: 9, padding: 0, flexDirection: 'row', lineHeight: 1.4 }}>
+    <Page size="A4" style={{ fontFamily: 'Inter', fontSize: 9, paddingTop: 40, paddingBottom: 40, paddingLeft: 0, paddingRight: 0, flexDirection: 'row', lineHeight: 1.4 }}>
       <View style={{ width: '35%', backgroundColor: ac, color: '#ffffff', padding: 24, paddingTop: 32 }}>
         {showProfileImage && profileImage && (
           <View style={{ alignItems: 'center', marginBottom: 12 }}>
@@ -595,7 +595,7 @@ const CreativeTheme = ({ data }: Props) => {
           <View style={{ marginBottom: 18 }}>
             <SectionHeader icon={briefcaseIcon({ size: 10, color: ac })} title="Experience" color={ac} />
             {experience.map(exp => (
-              <View key={exp.id} style={{ marginBottom: 12, paddingLeft: 10, borderLeftWidth: 2, borderLeftColor: ac }}>
+              <View key={exp.id} style={{ marginBottom: 12, paddingLeft: 10, borderLeftWidth: 2, borderLeftColor: ac }} wrap={false}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' }}>
                   <Text style={{ fontWeight: 700, color: '#0f172a', fontSize: 11 }}>{exp.role || ' '}</Text>
                   <Text style={{ fontSize: 7, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase' }}>{exp.startDate}{exp.endDate ? ` - ${exp.endDate}` : ''}</Text>
@@ -661,7 +661,7 @@ const CreativeTheme = ({ data }: Props) => {
           <View style={{ marginBottom: 18 }}>
             <SectionHeader icon={codeIcon({ size: 10, color: ac })} title="Projects" color={ac} />
             {projects.map(p => (
-              <View key={p.id} style={{ marginBottom: 12, paddingLeft: 10, borderLeftWidth: 2, borderLeftColor: ac }}>
+              <View key={p.id} style={{ marginBottom: 12, paddingLeft: 10, borderLeftWidth: 2, borderLeftColor: ac }} wrap={false}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' }}>
                   <Text style={{ fontWeight: 700, color: '#0f172a', fontSize: 11 }}>{p.title || ' '}</Text>
                   {p.link && <Link src={p.link}><Text style={{ fontSize: 7, fontWeight: 700, color: ac }}>Link</Text></Link>}
@@ -684,7 +684,7 @@ const TechTheme = ({ data }: Props) => {
   const ac = accentColor || '#4f46e5';
 
   return (
-    <Page size="A4" style={{ fontFamily: 'Inter', fontSize: 9, color: '#334155', padding: 28, lineHeight: 1.4 }}>
+    <Page size="A4" style={{ fontFamily: 'Inter', fontSize: 9, color: '#334155', paddingTop: 40, paddingBottom: 40, paddingLeft: 28, paddingRight: 28, lineHeight: 1.4 }}>
       <View style={{ borderBottomWidth: 3, borderBottomColor: '#0f172a', paddingBottom: 16, marginBottom: 20 }}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
 
@@ -780,7 +780,7 @@ const TechTheme = ({ data }: Props) => {
             <View style={{ marginBottom: 18 }}>
               <SectionHeader icon={briefcaseIcon({ size: 11, color: ac })} title="Professional Experience" color={ac} />
               {experience.map(exp => (
-                <View key={exp.id} style={{ marginBottom: 14 }}>
+                <View key={exp.id} style={{ marginBottom: 14 }} wrap={false}>
                   <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' }}>
                     <Text style={{ fontSize: 11, fontWeight: 800, color: '#0f172a' }}>{exp.role || ' '}</Text>
                     <Text style={{ fontSize: 7, fontWeight: 800, color: '#0f172a', backgroundColor: '#f1f5f9', paddingHorizontal: 6, paddingVertical: 3, borderRadius: 2, textTransform: 'uppercase' }}>{exp.startDate}{exp.endDate ? ` :: ${exp.endDate}` : ''}</Text>
@@ -831,7 +831,7 @@ const TechTheme = ({ data }: Props) => {
             <View style={{ marginBottom: 18 }}>
               <SectionHeader icon={cpuIcon({ size: 11, color: ac })} title="Technical Projects" color={ac} />
               {projects.map(p => (
-                <View key={p.id} style={{ marginBottom: 10, padding: 10, backgroundColor: '#f8fafc', borderRadius: 4, borderWidth: 1, borderColor: '#e2e8f0' }}>
+                <View key={p.id} style={{ marginBottom: 10, padding: 10, backgroundColor: '#f8fafc', borderRadius: 4, borderWidth: 1, borderColor: '#e2e8f0' }} wrap={false}>
                   <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                     <Text style={{ fontWeight: 800, fontSize: 10, color: '#0f172a' }}>{p.title || ' '}</Text>
                     {p.link && <Link src={p.link}><Text style={{ fontSize: 7, fontWeight: 800, color: ac, textTransform: 'uppercase' }}>[ Source ]</Text></Link>}
