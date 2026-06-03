@@ -58,25 +58,33 @@ const TechTemplate: React.FC<TechTemplateProps> = (props) => {
                 {personalInfo?.email && (
                   <div className="flex items-center gap-1.5 flex-wrap">
                     <Mail size={12} className="flex-shrink-0" style={{ color: accentColor }} />
-                    <EditableText value={personalInfo.email} onSave={(v: string) => updatePersonalInfo('email', v)} fieldId="email" className="break-all" />
+                    <a href={`mailto:${personalInfo.email}`} className="hover:opacity-80 transition-opacity text-inherit">
+                      <EditableText value={personalInfo.email} onSave={(v: string) => updatePersonalInfo('email', v)} fieldId="email" className="break-all" />
+                    </a>
                   </div>
                 )}
                 {personalInfo?.phone && (
                   <div className="flex items-center gap-1.5">
                     <Phone size={12} className="flex-shrink-0" style={{ color: accentColor }} />
-                    <EditableText value={personalInfo.phone} onSave={(v: string) => updatePersonalInfo('phone', v)} fieldId="phone" />
+                    <a href={`tel:${personalInfo.phone}`} className="hover:opacity-80 transition-opacity text-inherit">
+                      <EditableText value={personalInfo.phone} onSave={(v: string) => updatePersonalInfo('phone', v)} fieldId="phone" />
+                    </a>
                   </div>
                 )}
                 {personalInfo?.linkedin && (
                   <div className="flex items-center gap-1.5 break-all">
                     <Linkedin size={12} className="flex-shrink-0" style={{ color: accentColor }} />
-                    <EditableText value={personalInfo.linkedin} onSave={(v: string) => updatePersonalInfo('linkedin', v)} fieldId="linkedin" />
+                    <a href={personalInfo.linkedin.startsWith('http') ? personalInfo.linkedin : `https://${personalInfo.linkedin}`} className="hover:opacity-80 transition-opacity text-inherit" target="_blank" rel="noopener noreferrer">
+                      <EditableText value={personalInfo.linkedin} onSave={(v: string) => updatePersonalInfo('linkedin', v)} fieldId="linkedin" />
+                    </a>
                   </div>
                 )}
                 {personalInfo?.portfolio && (
                   <div className="flex items-center gap-1.5 break-all">
                     <Globe size={12} className="flex-shrink-0" style={{ color: accentColor }} />
-                    <EditableText value={personalInfo.portfolio} onSave={(v: string) => updatePersonalInfo('portfolio', v)} fieldId="portfolio" />
+                    <a href={personalInfo.portfolio.startsWith('http') ? personalInfo.portfolio : `https://${personalInfo.portfolio}`} className="hover:opacity-80 transition-opacity text-inherit" target="_blank" rel="noopener noreferrer">
+                      <EditableText value={personalInfo.portfolio} onSave={(v: string) => updatePersonalInfo('portfolio', v)} fieldId="portfolio" />
+                    </a>
                   </div>
                 )}
               </div>

@@ -262,11 +262,11 @@ const ClassicTheme = ({ data, isPreview = false }: Props) => {
         )}
         <Text style={s.name}>{personalInfo.fullName || ' '}</Text>
         <View style={s.contactRow}>
-          {personalInfo.email && <View style={s.contactItemSpacing}><View style={{ marginRight: 4 }}>{mailIcon({ size: 9, color: ac })}</View><Text style={{ fontSize: 8, color: '#64748b' }}>{personalInfo.email || ' '}</Text></View>}
-          {personalInfo.phone && <View style={s.contactItemSpacing}><View style={{ marginRight: 4 }}>{phoneIcon({ size: 9, color: ac })}</View><Text style={{ fontSize: 8, color: '#64748b' }}>{personalInfo.phone || ' '}</Text></View>}
+          {personalInfo.email && <View style={s.contactItemSpacing}><View style={{ marginRight: 4 }}>{mailIcon({ size: 9, color: ac })}</View><Link src={`mailto:${personalInfo.email}`} style={{ fontSize: 8, color: '#64748b', textDecoration: 'none' }}>{personalInfo.email || ' '}</Link></View>}
+          {personalInfo.phone && <View style={s.contactItemSpacing}><View style={{ marginRight: 4 }}>{phoneIcon({ size: 9, color: ac })}</View><Link src={`tel:${personalInfo.phone}`} style={{ fontSize: 8, color: '#64748b', textDecoration: 'none' }}>{personalInfo.phone || ' '}</Link></View>}
           {personalInfo.address && <View style={s.contactItemSpacing}><View style={{ marginRight: 4 }}>{mapPinIcon({ size: 9, color: ac })}</View><Text style={{ fontSize: 8, color: '#64748b' }}>{personalInfo.address || ' '}</Text></View>}
-          {personalInfo.linkedin && <View style={s.contactItemSpacing}><View style={{ marginRight: 4 }}>{linkedInIcon({ size: 9, color: ac })}</View><Text style={{ fontSize: 8, color: '#64748b' }}>{personalInfo.linkedin || ' '}</Text></View>}
-          {personalInfo.portfolio && <View style={s.contactItemSpacing}><View style={{ marginRight: 4 }}>{globeIcon({ size: 9, color: ac })}</View><Text style={{ fontSize: 8, color: '#64748b' }}>{personalInfo.portfolio || ' '}</Text></View>}
+          {personalInfo.linkedin && <View style={s.contactItemSpacing}><View style={{ marginRight: 4 }}>{linkedInIcon({ size: 9, color: ac })}</View><Link src={personalInfo.linkedin.startsWith('http') ? personalInfo.linkedin : `https://${personalInfo.linkedin}`} style={{ fontSize: 8, color: '#64748b', textDecoration: 'none' }}>{personalInfo.linkedin || ' '}</Link></View>}
+          {personalInfo.portfolio && <View style={s.contactItemSpacing}><View style={{ marginRight: 4 }}>{globeIcon({ size: 9, color: ac })}</View><Link src={personalInfo.portfolio.startsWith('http') ? personalInfo.portfolio : `https://${personalInfo.portfolio}`} style={{ fontSize: 8, color: '#64748b', textDecoration: 'none' }}>{personalInfo.portfolio || ' '}</Link></View>}
         </View>
       </View>
 
@@ -407,10 +407,10 @@ const ModernTheme = ({ data }: Props) => {
           </View>
         </View>
         <View style={{ textAlign: 'right', fontSize: 8, color: '#64748b', fontWeight: 500 }}>
-          {personalInfo.email && <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', marginBottom: 4 }}><Text style={{ marginRight: 6 }}>{personalInfo.email || ' '}</Text><View>{mailIcon({ size: 9, color: ac })}</View></View>}
-          {personalInfo.phone && <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', marginBottom: 4 }}><Text style={{ marginRight: 6 }}>{personalInfo.phone || ' '}</Text><View>{phoneIcon({ size: 9, color: ac })}</View></View>}
+          {personalInfo.email && <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', marginBottom: 4 }}><Link src={`mailto:${personalInfo.email}`} style={{ marginRight: 6, fontSize: 8, color: '#64748b', textDecoration: 'none' }}>{personalInfo.email || ' '}</Link><View>{mailIcon({ size: 9, color: ac })}</View></View>}
+          {personalInfo.phone && <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', marginBottom: 4 }}><Link src={`tel:${personalInfo.phone}`} style={{ marginRight: 6, fontSize: 8, color: '#64748b', textDecoration: 'none' }}>{personalInfo.phone || ' '}</Link><View>{phoneIcon({ size: 9, color: ac })}</View></View>}
           {personalInfo.address && <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', marginBottom: 4 }}><Text style={{ marginRight: 6 }}>{personalInfo.address || ' '}</Text><View>{mapPinIcon({ size: 9, color: ac })}</View></View>}
-          {personalInfo.linkedin && <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', marginBottom: 4 }}><Text style={{ marginRight: 6 }}>{personalInfo.linkedin || ' '}</Text><View>{linkedInIcon({ size: 9, color: ac })}</View></View>}
+          {personalInfo.linkedin && <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', marginBottom: 4 }}><Link src={personalInfo.linkedin.startsWith('http') ? personalInfo.linkedin : `https://${personalInfo.linkedin}`} style={{ marginRight: 6, fontSize: 8, color: '#64748b', textDecoration: 'none' }}>{personalInfo.linkedin || ' '}</Link><View>{linkedInIcon({ size: 9, color: ac })}</View></View>}
         </View>
       </View>
 
@@ -559,10 +559,10 @@ const CreativeTheme = ({ data }: Props) => {
             <View style={{ marginRight: 6 }}>{mapPinIcon({ size: 9, color: '#ffffff' })}</View>
             <Text style={{ fontSize: 7, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 2, color: 'rgba(255,255,255,0.8)' }}>Contact</Text>
           </View>
-          {personalInfo.email && <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}><View style={{ marginRight: 6 }}>{mailIcon({ size: 9, color: '#ffffff' })}</View><Text style={{ fontSize: 8, color: '#ffffff' }}>{personalInfo.email || ' '}</Text></View>}
-          {personalInfo.phone && <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}><View style={{ marginRight: 6 }}>{phoneIcon({ size: 9, color: '#ffffff' })}</View><Text style={{ fontSize: 8, color: '#ffffff' }}>{personalInfo.phone || ' '}</Text></View>}
+          {personalInfo.email && <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}><View style={{ marginRight: 6 }}>{mailIcon({ size: 9, color: '#ffffff' })}</View><Link src={`mailto:${personalInfo.email}`} style={{ fontSize: 8, color: '#ffffff', textDecoration: 'none' }}>{personalInfo.email || ' '}</Link></View>}
+          {personalInfo.phone && <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}><View style={{ marginRight: 6 }}>{phoneIcon({ size: 9, color: '#ffffff' })}</View><Link src={`tel:${personalInfo.phone}`} style={{ fontSize: 8, color: '#ffffff', textDecoration: 'none' }}>{personalInfo.phone || ' '}</Link></View>}
           {personalInfo.address && <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}><View style={{ marginRight: 6 }}>{mapPinIcon({ size: 9, color: '#ffffff' })}</View><Text style={{ fontSize: 8, color: '#ffffff' }}>{personalInfo.address || ' '}</Text></View>}
-          {personalInfo.linkedin && <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}><View style={{ marginRight: 6 }}>{linkedInIcon({ size: 9, color: '#ffffff' })}</View><Text style={{ fontSize: 8, color: '#ffffff' }}>{personalInfo.linkedin || ' '}</Text></View>}
+          {personalInfo.linkedin && <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}><View style={{ marginRight: 6 }}>{linkedInIcon({ size: 9, color: '#ffffff' })}</View><Link src={personalInfo.linkedin.startsWith('http') ? personalInfo.linkedin : `https://${personalInfo.linkedin}`} style={{ fontSize: 8, color: '#ffffff', textDecoration: 'none' }}>{personalInfo.linkedin || ' '}</Link></View>}
         </View>
 
         {languages && languages.length > 0 && (
@@ -718,14 +718,14 @@ const TechTheme = ({ data }: Props) => {
                 {personalInfo?.email && (
                   <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 16, marginBottom: 8 }}>
                     <View style={{ marginRight: 4 }}>{mailIcon({ size: 9, color: '#64748b' })}</View>
-                    <Text style={{ fontSize: 9, color: '#475569', fontWeight: 500 }}>{personalInfo.email}</Text>
+                    <Link src={`mailto:${personalInfo.email}`} style={{ fontSize: 9, color: '#475569', fontWeight: 500, textDecoration: 'none' }}>{personalInfo.email}</Link>
                   </View>
                 )}
                 
                 {personalInfo?.phone && (
                   <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 16, marginBottom: 8 }}>
                     <View style={{ marginRight: 4 }}>{phoneIcon({ size: 9, color: '#64748b' })}</View>
-                    <Text style={{ fontSize: 9, color: '#475569', fontWeight: 500 }}>{personalInfo.phone}</Text>
+                    <Link src={`tel:${personalInfo.phone}`} style={{ fontSize: 9, color: '#475569', fontWeight: 500, textDecoration: 'none' }}>{personalInfo.phone}</Link>
                   </View>
                 )}
                 
@@ -739,14 +739,14 @@ const TechTheme = ({ data }: Props) => {
                 {personalInfo?.linkedin && (
                   <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 16, marginBottom: 8 }}>
                     <View style={{ marginRight: 4 }}>{linkedInIcon({ size: 9, color: '#64748b' })}</View>
-                    <Text style={{ fontSize: 9, color: '#475569', fontWeight: 500 }}>{personalInfo.linkedin}</Text>
+                    <Link src={personalInfo.linkedin.startsWith('http') ? personalInfo.linkedin : `https://${personalInfo.linkedin}`} style={{ fontSize: 9, color: '#475569', fontWeight: 500, textDecoration: 'none' }}>{personalInfo.linkedin}</Link>
                   </View>
                 )}
                 
                 {personalInfo?.portfolio && (
                   <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 16, marginBottom: 8 }}>
                     <View style={{ marginRight: 4 }}>{globeIcon({ size: 9, color: '#64748b' })}</View>
-                    <Text style={{ fontSize: 9, color: '#475569', fontWeight: 500 }}>{personalInfo.portfolio}</Text>
+                    <Link src={personalInfo.portfolio.startsWith('http') ? personalInfo.portfolio : `https://${personalInfo.portfolio}`} style={{ fontSize: 9, color: '#475569', fontWeight: 500, textDecoration: 'none' }}>{personalInfo.portfolio}</Link>
                   </View>
                 )}
 

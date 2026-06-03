@@ -324,13 +324,13 @@ const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(({ data, on
                 {personalInfo?.email && (
                   <span className="flex items-center gap-2">
                     <Mail size={12} className="relative top-[2px]" /> 
-                    <EditableText value={personalInfo.email} onSave={(v) => updatePersonalInfo('email', v)} fieldId="email" />
+                    <a href={`mailto:${personalInfo.email}`} className="hover:opacity-80 transition-opacity text-inherit"><EditableText value={personalInfo.email} onSave={(v) => updatePersonalInfo('email', v)} fieldId="email" /></a>
                   </span>
                 )}
                 {personalInfo?.phone && (
                   <span className="flex items-center gap-2">
                     <Phone size={12} className="relative top-[2px]" /> 
-                    <EditableText value={personalInfo.phone} onSave={(v) => updatePersonalInfo('phone', v)} fieldId="phone" />
+                    <a href={`tel:${personalInfo.phone}`} className="hover:opacity-80 transition-opacity text-inherit"><EditableText value={personalInfo.phone} onSave={(v) => updatePersonalInfo('phone', v)} fieldId="phone" /></a>
                   </span>
                 )}
               </div>
@@ -596,8 +596,8 @@ const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(({ data, on
               <section>
                 <h2 className="text-xs font-bold uppercase tracking-widest mb-4 opacity-60">Contact</h2>
                 <div className="space-y-3 text-xs">
-                  <div className="flex items-center gap-2"><Mail size={14} className="relative top-[2px]" /> <EditableText value={personalInfo?.email || ''} onSave={(v) => updatePersonalInfo('email', v)} fieldId="email" /></div>
-                  <div className="flex items-center gap-2"><Phone size={14} className="relative top-[2px]" /> <EditableText value={personalInfo?.phone || ''} onSave={(v) => updatePersonalInfo('phone', v)} fieldId="phone" /></div>
+                  <div className="flex items-center gap-2"><Mail size={14} className="relative top-[2px]" /> <a href={`mailto:${personalInfo?.email}`} className="hover:opacity-80 transition-opacity text-inherit"><EditableText value={personalInfo?.email || ''} onSave={(v) => updatePersonalInfo('email', v)} fieldId="email" /></a></div>
+                  <div className="flex items-center gap-2"><Phone size={14} className="relative top-[2px]" /> <a href={`tel:${personalInfo?.phone}`} className="hover:opacity-80 transition-opacity text-inherit"><EditableText value={personalInfo?.phone || ''} onSave={(v) => updatePersonalInfo('phone', v)} fieldId="phone" /></a></div>
                 </div>
               </section>
 
@@ -880,11 +880,11 @@ const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(({ data, on
               </div>
               <div className="text-right space-y-1 text-xs text-slate-500 font-medium">
                 <div className="flex items-center justify-end gap-2 w-full">
-                  <EditableText value={personalInfo?.email || ''} onSave={(v) => updatePersonalInfo('email', v)} fieldId="email" />
+                  <a href={`mailto:${personalInfo?.email}`} className="hover:opacity-80 transition-opacity text-inherit"><EditableText value={personalInfo?.email || ''} onSave={(v) => updatePersonalInfo('email', v)} fieldId="email" /></a>
                   <Mail size={12} className="relative top-[2px]" style={{ color: accentColor }} />
                 </div>
                 <div className="flex items-center justify-end gap-2 w-full">
-                  <EditableText value={personalInfo?.phone || ''} onSave={(v) => updatePersonalInfo('phone', v)} fieldId="phone" />
+                  <a href={`tel:${personalInfo?.phone}`} className="hover:opacity-80 transition-opacity text-inherit"><EditableText value={personalInfo?.phone || ''} onSave={(v) => updatePersonalInfo('phone', v)} fieldId="phone" /></a>
                   <Phone size={12} className="relative top-[2px]" style={{ color: accentColor }} />
                 </div>
               </div>
