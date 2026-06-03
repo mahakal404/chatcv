@@ -202,6 +202,8 @@ const INITIAL_DATA: ResumeData = {
   showSkillLevels: true,
   languageDisplayStyle: 'text',
   showLanguageLevels: true,
+  hasUnlockedClassicIcons: false,
+  previewPremiumIcons: false,
   customSections: []
 };
 

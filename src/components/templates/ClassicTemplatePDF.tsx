@@ -235,6 +235,20 @@ const ClassicTheme = ({ data }: Props) => {
     gridItem: { width: '48%', marginRight: '1%', marginBottom: 6, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 4, paddingHorizontal: 6, backgroundColor: '#f8fafc', borderRadius: 4 },
   });
 
+  const renderTitle = (title: string, iconFn: any) => {
+    if (data.hasUnlockedClassicIcons) {
+      return (
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10, marginTop: 14, borderBottomWidth: 1, borderBottomColor: ac, paddingBottom: 3 }}>
+          <View style={{ marginRight: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            {iconFn({ size: 12, color: ac })}
+          </View>
+          <Text style={{ fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 2, color: ac }}>{title}</Text>
+        </View>
+      );
+    }
+    return <Text style={s.sectionTitle}>{title}</Text>;
+  };
+
   return (
     <Page size="A4" style={s.page}>
       <View style={s.headerWrap}>
@@ -255,14 +269,14 @@ const ClassicTheme = ({ data }: Props) => {
 
       {summary && summary.trim() !== '' && (
         <View style={{ marginBottom: 4 }}>
-          <Text style={s.sectionTitle}>Summary</Text>
+          {renderTitle('Summary', userIcon)}
           <Text style={s.desc}>{summary || ' '}</Text>
         </View>
       )}
 
       {experience && experience.length > 0 && (
         <View>
-          <Text style={s.sectionTitle}>Experience</Text>
+          {renderTitle('Experience', briefcaseIcon)}
           {experience.map(exp => (
             <View key={exp.id} style={s.itemWrap}>
               <View style={s.itemHeader}>
@@ -278,7 +292,7 @@ const ClassicTheme = ({ data }: Props) => {
 
       {education && education.length > 0 && (
         <View>
-          <Text style={s.sectionTitle}>Education</Text>
+          {renderTitle('Education', graduationIcon)}
           {education.map(edu => {
             const degree = getDegreeText(edu);
             const institution = getInstitutionText(edu);
@@ -304,7 +318,7 @@ const ClassicTheme = ({ data }: Props) => {
 
       {skills && skills.length > 0 && (
         <View>
-          <Text style={s.sectionTitle}>Skills</Text>
+          {renderTitle('Skills', cpuIcon)}
           <View style={s.grid2}>
             {skills.map(skill => (
               <View key={skill.id} style={s.gridItem} wrap={false}>
@@ -318,7 +332,7 @@ const ClassicTheme = ({ data }: Props) => {
 
       {projects && projects.length > 0 && (
         <View>
-          <Text style={s.sectionTitle}>Projects</Text>
+          {renderTitle('Projects', codeIcon)}
           {projects.map(p => (
             <View key={p.id} style={s.itemWrap}>
               <View style={s.itemHeader}>
@@ -333,7 +347,7 @@ const ClassicTheme = ({ data }: Props) => {
 
       {certifications && certifications.length > 0 && (
         <View>
-          <Text style={s.sectionTitle}>Certifications</Text>
+          {renderTitle('Certifications', awardIcon)}
           {certifications.map(cert => (
             <View key={cert.id} style={{ marginBottom: 8 }} wrap={false}>
               <View style={s.itemHeader}>
@@ -348,7 +362,7 @@ const ClassicTheme = ({ data }: Props) => {
 
       {languages && languages.length > 0 && (
         <View>
-          <Text style={s.sectionTitle}>Languages</Text>
+          {renderTitle('Languages', languageIcon)}
           <View style={s.grid2}>
             {languages.map(lang => (
               <View key={lang.id} style={s.gridItem} wrap={false}>
@@ -362,7 +376,7 @@ const ClassicTheme = ({ data }: Props) => {
 
       {customSections && customSections.length > 0 && customSections.map(section => (
         <View key={section.id}>
-          <Text style={s.sectionTitle}>{section.title || ' '}</Text>
+          {renderTitle(section.title || ' ', terminalIcon)}
           <Text style={s.desc}>{section.content || ' '}</Text>
         </View>
       ))}

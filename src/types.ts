@@ -84,6 +84,8 @@ export interface ResumeData {
   showSkillLevels?: boolean;
   languageDisplayStyle: 'text' | 'stars' | 'dots' | 'bar' | 'circle';
   showLanguageLevels?: boolean;
+  hasUnlockedClassicIcons?: boolean;
+  previewPremiumIcons?: boolean;
 }
 
 export interface Resume {

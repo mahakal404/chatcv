@@ -340,7 +340,7 @@ const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(({ data, on
               {summary && summary.trim() !== '' && (
                 <section>
                   <h2 className="text-lg font-bold uppercase border-b mb-3 flex items-center gap-2" style={{ color: accentColor, borderColor: accentColor }}>
-                    <User size={18} className="relative top-[2px]" /> Summary
+                    {(data.hasUnlockedClassicIcons || data.previewPremiumIcons) && <User size={18} className="relative top-[2px]" />} Summary
                   </h2>
                   <EditableText 
                     value={summary} 
@@ -355,7 +355,7 @@ const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(({ data, on
               {experience && experience.length > 0 && (
                 <section>
                   <h2 className="text-lg font-bold uppercase border-b mb-4 flex items-center gap-2" style={{ color: accentColor, borderColor: accentColor }}>
-                    <Briefcase size={18} className="relative top-[2px]" /> Experience
+                    {(data.hasUnlockedClassicIcons || data.previewPremiumIcons) && <Briefcase size={18} className="relative top-[2px]" />} Experience
                   </h2>
                   <div className="space-y-6">
                     {experience.map((exp) => (
@@ -397,7 +397,7 @@ const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(({ data, on
               {education && education.length > 0 && (
                 <section>
                   <h2 className="text-lg font-bold uppercase border-b mb-4 flex items-center gap-2" style={{ color: accentColor, borderColor: accentColor }}>
-                    <GraduationCap size={18} className="relative top-[2px]" /> Education
+                    {(data.hasUnlockedClassicIcons || data.previewPremiumIcons) && <GraduationCap size={18} className="relative top-[2px]" />} Education
                   </h2>
                   <div className="space-y-4">
                     {education.map((edu) => {
@@ -450,7 +450,7 @@ const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(({ data, on
               {certifications && certifications.length > 0 && (
                 <section>
                   <h2 className="text-lg font-bold uppercase border-b mb-4 flex items-center gap-2" style={{ color: accentColor, borderColor: accentColor }}>
-                    <Award size={18} className="relative top-[2px]" /> Certifications
+                    {(data.hasUnlockedClassicIcons || data.previewPremiumIcons) && <Award size={18} className="relative top-[2px]" />} Certifications
                   </h2>
                   <div className="space-y-3">
                     {certifications.map((cert) => {
@@ -488,7 +488,7 @@ const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(({ data, on
               {projects && projects.length > 0 && (
                 <section>
                   <h2 className="text-lg font-bold uppercase border-b mb-4 flex items-center gap-2" style={{ color: accentColor, borderColor: accentColor }}>
-                    <Code size={18} className="relative top-[2px]" /> Projects
+                    {(data.hasUnlockedClassicIcons || data.previewPremiumIcons) && <Code size={18} className="relative top-[2px]" />} Projects
                   </h2>
                   <div className="space-y-6">
                     {projects.map((p) => (
@@ -522,7 +522,7 @@ const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(({ data, on
               {skills && skills.length > 0 && (
                 <section>
                   <h2 className="text-lg font-bold uppercase border-b mb-3 flex items-center gap-2" style={{ color: accentColor, borderColor: accentColor }}>
-                    <Cpu size={18} className="relative top-[2px]" /> Skills
+                    {(data.hasUnlockedClassicIcons || data.previewPremiumIcons) && <Cpu size={18} className="relative top-[2px]" />} Skills
                   </h2>
                   <div className="grid grid-cols-2 gap-x-8 gap-y-4">
                     {skills.map((skill) => (
@@ -540,7 +540,7 @@ const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(({ data, on
               {languages && languages.length > 0 && (
                 <section>
                   <h2 className="text-lg font-bold uppercase border-b mb-3 flex items-center gap-2" style={{ color: accentColor, borderColor: accentColor }}>
-                    <Languages size={18} className="relative top-[2px]" /> Languages
+                    {(data.hasUnlockedClassicIcons || data.previewPremiumIcons) && <Languages size={18} className="relative top-[2px]" />} Languages
                   </h2>
                   <div className="grid grid-cols-2 gap-x-8 gap-y-4">
                     {languages.map((lang) => (
