@@ -802,7 +802,7 @@ const TechTheme = ({ data }: Props) => {
                   <View key={lang.id} style={{ width: '45%', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }} wrap={false}>
                     <Text style={{ fontSize: 9, fontWeight: 700, color: '#0f172a' }}>{lang.name || ' '}</Text>
                     <View>
-                      {proficiencyDisplay({ level: lang.proficiency, type: 'language', style: languageDisplayStyle, accentColor: ac })}
+                      {showLanguageLevels !== false && proficiencyDisplay({ level: lang.proficiency, type: 'language', style: languageDisplayStyle, accentColor: ac })}
                     </View>
                   </View>
                 ))}
@@ -848,7 +848,7 @@ const TechTheme = ({ data }: Props) => {
                 {skills.map(skill => (
                   <View key={skill.id} style={{ padding: 6, borderRadius: 4, backgroundColor: '#f8fafc', borderWidth: 1, borderColor: '#e2e8f0' }} wrap={false}>
                     <Text style={{ fontSize: 9, fontWeight: 700, color: '#0f172a', marginBottom: 4 }}>{skill.name || ' '}</Text>
-                    {proficiencyDisplay({ level: skill.level, type: 'skill', style: skillDisplayStyle, accentColor: ac })}
+                    {showSkillLevels !== false && proficiencyDisplay({ level: skill.level, type: 'skill', style: skillDisplayStyle, accentColor: ac })}
                   </View>
                 ))}
               </View>

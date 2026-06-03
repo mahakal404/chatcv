@@ -193,7 +193,7 @@ const TechTemplate: React.FC<TechTemplateProps> = (props) => {
                 {languages.map((lang) => (
                   <div key={lang.id} className="flex items-center justify-between w-[45%] mb-2" style={{ pageBreakInside: 'avoid', breakInside: 'avoid' }}>
                     <span className="text-sm font-medium text-slate-700 capitalize tracking-wider">{lang.name}</span>
-                    {data.showLanguageLevels !== false && <ProficiencyDisplay level={lang.proficiency} type="language" />}
+                    {data.showLanguageLevels && <ProficiencyDisplay level={lang.proficiency} type="language" />}
                   </div>
                 ))}
               </div>
@@ -282,7 +282,7 @@ const TechTemplate: React.FC<TechTemplateProps> = (props) => {
                     style={{ pageBreakInside: 'avoid', breakInside: 'avoid' }}
                   >
                     <div className="text-xs font-bold text-slate-900 mb-1 capitalize tracking-wider">{skill.name}</div>
-                    {data.showSkillLevels !== false && <ProficiencyDisplay level={skill.level} type="skill" />}
+                    {data.showSkillLevels && <ProficiencyDisplay level={skill.level} type="skill" />}
                   </div>
                 ))}
               </div>
