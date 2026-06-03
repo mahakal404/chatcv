@@ -557,7 +557,8 @@ const ResumePreview = forwardRef<HTMLDivElement, ResumePreviewProps>(({ data, on
 
               {data.customSections && data.customSections.length > 0 && data.customSections.map((section) => (
                 <section key={section.id}>
-                  <h2 className="text-lg font-bold uppercase border-b mb-3" style={{ color: accentColor, borderColor: accentColor }}>
+                  <h2 className="text-lg font-bold uppercase border-b mb-3 flex items-center gap-2" style={{ color: accentColor, borderColor: accentColor }}>
+                    {(data.hasUnlockedClassicIcons || data.previewPremiumIcons) && <Terminal size={18} className="relative top-[2px]" />}
                     <EditableText 
                       value={section.title} 
                       onSave={(v) => updateCustomSection(section.id, 'title', v)} 
