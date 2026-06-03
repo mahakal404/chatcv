@@ -454,6 +454,25 @@ export default function BuilderPage({ user }: { user: User | null }) {
   }, [isGuest, tokens, deductToken, addToken, data.personalInfo.fullName, navigate]);
 
 
+  const handleUnlockClassicIcons = async () => {
+    if (isGuest) {
+      toast.error('Please login to unlock Premium Icons.');
+      return;
+    }
+    
+    if (tokens >= 1) {
+      try {
+        await deductToken(1);
+        setData(prev => ({ ...prev, hasUnlockedClassicIcons: true }));
+        toast.success("Premium Icons unlocked successfully! 🎉");
+      } catch (err) {
+        toast.error("Failed to unlock Premium Icons.");
+      }
+    } else {
+      setShowAdModal(true);
+    }
+  };
+
   const handleAIImprove = async (section: string, content: string) => {
     try {
       const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
